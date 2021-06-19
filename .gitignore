@@ -1,3 +1,5 @@
-.idea
-.jmonkeybuilder
+.idea/
+target/
+kinect_drums.iml
+.jmonkeybuilder/
 *.swp
