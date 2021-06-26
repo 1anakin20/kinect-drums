@@ -5,8 +5,6 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
-import com.jme3.app.state.AbstractAppState;
-import com.jme3.app.state.AppState;
 import com.jme3.app.state.ConstantVerifierState;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.export.binary.BinaryImporter;
@@ -18,7 +16,6 @@ import com.sun.tools.javac.Main;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.control.Hand;
 import com.tomas.kinect.control.KinectHandControl;
-import com.tomas.wiimote.WiimoteHandControl;
 import com.tomas.wiimote.WiimoteMotion;
 import wiiusej.WiiUseApiManager;
 import wiiusej.Wiimote;
@@ -102,10 +99,8 @@ public class Game extends SimpleApplication {
 
 		Spatial leftStick = rootNode.getChild("left_stick");
 		leftStick.addControl(new KinectHandControl(kinect, Hand.LEFT_HAND));
-		leftStick.addControl(new WiimoteHandControl(leftWiimoteMotion));
 
 		Spatial rightStick = rootNode.getChild("right_stick");
 		rightStick.addControl(new KinectHandControl(kinect, Hand.RIGHT_HAND));
-		rightStick.addControl(new WiimoteHandControl(rightWiimoteMotion));
 	}
 }
