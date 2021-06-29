@@ -18,17 +18,14 @@ public class KinectHandControl extends AbstractControl {
 	@Override
 	protected void controlUpdate(float tpf) {
 		Vector3f translation = null;
-		switch (handDirection) {
-			case LEFT_HAND:
-				if (kinect.getLeftHand() != null) {
-					translation = kinect.getLeftHand().getTranslation();
-				}
-				break;
-			case RIGHT_HAND:
-				if (kinect.getRightHand() != null) {
+		if (handDirection == Hand.LEFT_HAND) {
+			if (kinect.getLeftHand() != null) {
+				translation = kinect.getLeftHand().getTranslation();
+			}
+		} else if (handDirection == Hand.RIGHT_HAND) {
+			if (kinect.getRightHand() != null) {
 				translation = kinect.getRightHand().getTranslation();
 			}
-				break;
 		}
 
 		if (translation != null) {

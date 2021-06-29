@@ -7,6 +7,13 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ConstantVerifierState;
 import com.jme3.audio.AudioListenerState;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.GhostControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.export.binary.BinaryImporter;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -16,19 +23,36 @@ import com.sun.tools.javac.Main;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.control.Hand;
 import com.tomas.kinect.control.KinectHandControl;
-import com.tomas.wiimote.WiimoteMotion;
+import jme3tools.shadercheck.GpuAnalyzerValidator;
 import wiiusej.WiiUseApiManager;
 import wiiusej.Wiimote;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Game extends SimpleApplication {
+public class Game extends SimpleApplication implements PhysicsCollisionListener {
 	private final String scenesPath = "assets/scenes/";
-	Kinect kinect;
+	private Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
+
+	// Game objects
+	// Player
+	private Spatial rightStick;
+	private Spatial leftStick;
+	// Drum
+	private Spatial snareDrum;
+	private Spatial floorTom;
+
+	// Collisions
+	// Player
+	private GhostControl rightStickGhost;
+	private GhostControl leftStickGhost;
+	// Drum
+	private GhostControl snareDrumGhost;
+	private GhostControl floorTomGhost;
 
 	Game() {
 		super(new StatsAppState(),
@@ -61,6 +85,7 @@ public class Game extends SimpleApplication {
 		if (kinect.start(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480) == 1) {
 			System.out.println("Kinect loaded");
 		}
+		kinect.startSkeletonTracking(true);
 
 
 		// Wiimote setup
@@ -75,32 +100,108 @@ public class Game extends SimpleApplication {
 
 		// 2 wiimotes need to be used
 		// TODO Allow to start the app without the 2 wiimotes
-		Wiimote[] wiimotes = wiiUseApiManager.getWiimotes(2);
-		Wiimote leftWiimote = wiimotes[0];
-		Wiimote rightWiimote = wiimotes[1];
+//		Wiimote[] wiimotes = wiiUseApiManager.getWiimotes(2);
+//		leftWiimote = wiimotes[0];
+//		rightWiimote = wiimotes[1];
+//
+//		leftWiimote.setLeds(true, false, false, false);
+//		rightWiimote.setLeds(false, true, false, false);
+//
+//		leftWiimote.activateMotionSensing();
+//		leftWiimote.activateSmoothing();
+//		leftWiimote.setAlphaSmoothingValue(0.8f);
+//		leftWiimote.activateContinuous();
+//		rightWiimote.activateMotionSensing();
+//		rightWiimote.activateSmoothing();
+//		rightWiimote.activateContinuous();
+//
+//		WiimoteMotion leftWiimoteMotion = new WiimoteMotion();
+//		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
+//
+//		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
+//		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
 
-		leftWiimote.setLeds(true, false, false, false);
-		rightWiimote.setLeds(false, true, false, false);
+		setGameObjects();
 
-		leftWiimote.activateMotionSensing();
-		leftWiimote.activateSmoothing();
-		leftWiimote.setAlphaSmoothingValue(0.8f);
-		leftWiimote.activateContinuous();
-		rightWiimote.activateMotionSensing();
-		rightWiimote.activateSmoothing();
-		rightWiimote.activateContinuous();
-
-		WiimoteMotion leftWiimoteMotion = new WiimoteMotion();
-		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
-
-		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
-		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
-
-
-		Spatial leftStick = rootNode.getChild("left_stick");
 		leftStick.addControl(new KinectHandControl(kinect, Hand.LEFT_HAND));
 
-		Spatial rightStick = rootNode.getChild("right_stick");
 		rightStick.addControl(new KinectHandControl(kinect, Hand.RIGHT_HAND));
+
+		setCollisions();
+	}
+
+	@Override
+	public void simpleUpdate(float tpf) {
+
+	}
+
+	private void setGameObjects() {
+		// Player
+		leftStick = rootNode.getChild("left_stick");
+		rightStick = rootNode.getChild("right_stick");
+
+		// Drum
+		snareDrum = rootNode.getChild("snare_drum");
+		floorTom = rootNode.getChild("floor_tom");
+	}
+
+	private void setCollisions() {
+		// Collisions
+		BulletAppState bulletAppState = new BulletAppState();
+		stateManager.attach(bulletAppState);
+		bulletAppState.setDebugEnabled(true);
+
+		CollisionShape rightStickCollision = CollisionShapeFactory.createBoxShape(rightStick);
+		rightStickGhost = new GhostControl(rightStickCollision);
+		bulletAppState.getPhysicsSpace().add(rightStickGhost);
+		rightStick.addControl(rightStickGhost);
+
+		CollisionShape leftStickCollision = CollisionShapeFactory.createBoxShape(leftStick);
+		leftStickGhost = new GhostControl(leftStickCollision);
+		bulletAppState.getPhysicsSpace().add(leftStickGhost);
+		leftStick.addControl(leftStickGhost);
+
+//		rightStickGhost = new GhostControl(CollisionShapeFactory.createMeshShape(rightStick));
+//		bulletAppState.getPhysicsSpace().add(rightStickGhost);
+//		rightStick.addControl(rightStickGhost);
+//
+//		leftStickGhost = new GhostControl((CollisionShapeFactory.createMeshShape(leftStick)));
+//		bulletAppState.getPhysicsSpace().add(leftStickGhost);
+//		leftStick.addControl(leftStickGhost);
+//
+//
+//		// TODO add collisions to drum parts
+//		snareDrumGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
+//		snareDrum.addControl(snareDrumGhost);
+//		bulletAppState.getPhysicsSpace().add(snareDrumGhost);
+//
+//		floorTomGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
+//		floorTom.addControl(floorTomGhost);
+//		bulletAppState.getPhysicsSpace().add(floorTomGhost);
+
+		bulletAppState.getPhysicsSpace().addCollisionListener(this);
+	}
+
+	@Override
+	public void collision(PhysicsCollisionEvent physicsCollisionEvent) {
+		PhysicsCollisionObject a = physicsCollisionEvent.getObjectA();
+		PhysicsCollisionObject b = physicsCollisionEvent.getObjectB();
+
+		String aName = ((GhostControl) a).getSpatial().getName();
+		String bName = ((GhostControl) b).getSpatial().getName();
+
+		PhysicsCollisionObject stick = null;
+		PhysicsCollisionObject drum = null;
+		if (aName.equals("right_stick") || aName.equals("left_stick")) {
+			stick = a;
+			drum = b;
+		} else if (bName.equals("right_stick") || bName.equals(("left_stick"))) {
+			stick = b;
+			drum = a;
+		}
+
+		// TODO play appropriate sound when collided with drum parts
+		System.out.println(((GhostControl) stick).getSpatial().getName());
+		System.out.println(((GhostControl) drum).getSpatial().getName());
 	}
 }
