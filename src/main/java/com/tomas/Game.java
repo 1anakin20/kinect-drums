@@ -6,7 +6,10 @@ import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.app.state.ConstantVerifierState;
+import com.jme3.asset.plugins.FileLocator;
+import com.jme3.audio.AudioData;
 import com.jme3.audio.AudioListenerState;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -23,7 +26,6 @@ import com.sun.tools.javac.Main;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.control.Hand;
 import com.tomas.kinect.control.KinectHandControl;
-import jme3tools.shadercheck.GpuAnalyzerValidator;
 import wiiusej.WiiUseApiManager;
 import wiiusej.Wiimote;
 
@@ -33,7 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Game extends SimpleApplication implements PhysicsCollisionListener {
-	private final String scenesPath = "assets/scenes/";
+	private final String scenesPath = "assets/Scenes/";
 	private Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
@@ -66,6 +68,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener 
 	}
 
 	public void simpleInitApp() {
+		assetManager.registerLocator("assets/", FileLocator.class);
 		BinaryImporter importer = BinaryImporter.getInstance();
 		importer.setAssetManager(assetManager);
 		File file = new File(scenesPath + "drums.j3o");
@@ -149,7 +152,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener 
 		// Collisions
 		BulletAppState bulletAppState = new BulletAppState();
 		stateManager.attach(bulletAppState);
-		bulletAppState.setDebugEnabled(true);
 
 		CollisionShape rightStickCollision = CollisionShapeFactory.createBoxShape(rightStick);
 		rightStickGhost = new GhostControl(rightStickCollision);
@@ -161,23 +163,14 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener 
 		bulletAppState.getPhysicsSpace().add(leftStickGhost);
 		leftStick.addControl(leftStickGhost);
 
-//		rightStickGhost = new GhostControl(CollisionShapeFactory.createMeshShape(rightStick));
-//		bulletAppState.getPhysicsSpace().add(rightStickGhost);
-//		rightStick.addControl(rightStickGhost);
-//
-//		leftStickGhost = new GhostControl((CollisionShapeFactory.createMeshShape(leftStick)));
-//		bulletAppState.getPhysicsSpace().add(leftStickGhost);
-//		leftStick.addControl(leftStickGhost);
-//
-//
-//		// TODO add collisions to drum parts
-//		snareDrumGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
-//		snareDrum.addControl(snareDrumGhost);
-//		bulletAppState.getPhysicsSpace().add(snareDrumGhost);
-//
-//		floorTomGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
-//		floorTom.addControl(floorTomGhost);
-//		bulletAppState.getPhysicsSpace().add(floorTomGhost);
+		// TODO add collisions to drum parts
+		snareDrumGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
+		snareDrum.addControl(snareDrumGhost);
+		bulletAppState.getPhysicsSpace().add(snareDrumGhost);
+
+		floorTomGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
+		floorTom.addControl(floorTomGhost);
+		bulletAppState.getPhysicsSpace().add(floorTomGhost);
 
 		bulletAppState.getPhysicsSpace().addCollisionListener(this);
 	}
@@ -201,7 +194,15 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener 
 		}
 
 		// TODO play appropriate sound when collided with drum parts
-		System.out.println(((GhostControl) stick).getSpatial().getName());
-		System.out.println(((GhostControl) drum).getSpatial().getName());
+		String drumName = ((GhostControl) drum).getSpatial().getName();
+		if (!drumName.contains("stick")) {
+			playDrum(drumName);
+		}
+	}
+
+	private void playDrum(String drumName) {
+		AudioNode sound = new AudioNode(assetManager, "Sounds/" + drumName + ".wav", AudioData.DataType.Buffer);
+		sound.setPositional(false);
+		sound.playInstance();
 	}
 }
