@@ -9,10 +9,16 @@ import com.tomas.kinect.Kinect;
 public class KinectHandControl extends AbstractControl {
 	private Kinect kinect;
 	private Hand handDirection;
+	private long previousTime;
+	private Vector3f previousHandLocation;
+	private Vector3f handVelocity;
+	private boolean handClear = true;
 
 	public KinectHandControl(Kinect kinect, Hand handDirection) {
 		this.kinect = kinect;
 		this.handDirection = handDirection;
+		previousTime = 0;
+		previousHandLocation = new Vector3f();
 	}
 
 	@Override
@@ -28,12 +34,35 @@ public class KinectHandControl extends AbstractControl {
 			}
 		}
 
-		if (translation != null) {
-			spatial.setLocalTranslation(translation);
+		if (translation == null) {
+			return;
 		}
+
+		spatial.setLocalTranslation(translation);
+
+		if (previousTime == 0) {
+			previousHandLocation = translation;
+		}
+
+		// Velocity
+		long currentTime = System.currentTimeMillis();
+		long timeDifference = currentTime - previousTime;
+		handVelocity = translation.subtract(previousHandLocation).divide(timeDifference);
+
+		// Update previous values
+		previousHandLocation = translation;
+		previousTime = currentTime;
+
+		spatial.setUserData("handVelocity", handVelocity);
 	}
 
 	@Override
 	protected void controlRender(RenderManager rm, ViewPort vp) {
+	}
+
+	private void checkHandClear() {
+		if (handVelocity.getY() > 0) {
+			handClear = true;
+		}
 	}
 }
