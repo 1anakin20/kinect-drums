@@ -24,6 +24,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
+import com.tomas.drumkit.StickData;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.control.Hand;
 import com.tomas.kinect.control.KinectHandControl;
@@ -141,9 +142,9 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	private void setGameObjects() {
 		// Player
 		leftStick = rootNode.getChild("left_stick");
-		leftStick.setUserData("handClear", true);
+		leftStick.setUserData(StickData.CLEAR.getKey(), true);
 		rightStick = rootNode.getChild("right_stick");
-		rightStick.setUserData("handClear", true);
+		rightStick.setUserData(StickData.CLEAR.getKey(), true);
 
 		// Drum
 		snareDrum = rootNode.getChild("snare_drum");
@@ -196,23 +197,16 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 			drum = ((GhostControl) a).getSpatial();
 		}
 
-		boolean handClear = stick.getUserData("handClear");
+		boolean handClear = stick.getUserData(StickData.CLEAR.getKey());
 		float handVelocityY = ((Vector3f) stick.getUserData("handVelocity")).getY();
-		if (handClear && handVelocityY < -0.0001f) {
-			System.out.println("Hit the drum " + drum.getName());
-			stick.setUserData("handClear", false);
+		if (handClear) {
+			stick.setUserData(StickData.CLEAR.getKey(), false);
 			String drumName = drum.getName();
 			// TODO use collision groups so sticks can't collide with each other
 			if (!drumName.contains("stick")) {
-				playDrum(drumName);
+				playDrum(drumName, Math.abs(handVelocityY * 100));
 			}
 		}
-	}
-
-	private void playDrum(String drumName) {
-		AudioNode sound = new AudioNode(assetManager, "Sounds/" + drumName + ".wav", AudioData.DataType.Buffer);
-		sound.setPositional(false);
-		sound.playInstance();
 	}
 
 	@Override
@@ -223,11 +217,18 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	@Override
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
 		if (rightStickGhost.getOverlappingObjects().isEmpty()) {
-			rightStick.setUserData("handClear", true);
+			rightStick.setUserData(StickData.CLEAR.getKey(), true);
 		}
 
 		if (leftStickGhost.getOverlappingObjects().isEmpty()) {
-			leftStick.setUserData("handClear", true);
+			leftStick.setUserData(StickData.CLEAR.getKey(), true);
 		}
+	}
+
+	private void playDrum(String drumName, float volume) {
+		AudioNode sound = new AudioNode(assetManager, "Sounds/" + drumName + ".wav", AudioData.DataType.Buffer);
+		sound.setPositional(false);
+		sound.setVolume(volume);
+		sound.playInstance();
 	}
 }
