@@ -36,7 +36,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
-	private final String scenesPath = "assets/Scenes/";
 	private Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
@@ -198,7 +197,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		}
 
 		boolean handClear = stick.getUserData(StickData.CLEAR.getKey());
-		float handVelocityY = ((Vector3f) stick.getUserData("handVelocity")).getY();
+		float handVelocityY = ((Vector3f) stick.getUserData(StickData.VELOCITY.getKey())).getY();
 		if (handClear) {
 			stick.setUserData(StickData.CLEAR.getKey(), false);
 			String drumName = drum.getName();
