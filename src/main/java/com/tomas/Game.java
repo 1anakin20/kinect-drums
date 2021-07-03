@@ -25,8 +25,9 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
 import com.tomas.drumkit.StickData;
+import com.tomas.game_objects.DrumData;
+import com.tomas.game_objects.Hand;
 import com.tomas.kinect.Kinect;
-import com.tomas.kinect.control.Hand;
 import com.tomas.kinect.control.KinectHandControl;
 import wiiusej.Wiimote;
 
@@ -36,25 +37,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
+	private BulletAppState bulletAppState;
+
 	private Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
 
-	// Game objects
 	// Player
 	private Spatial rightStick;
 	private Spatial leftStick;
-	// Drum
-	private Spatial snareDrum;
-	private Spatial floorTom;
-
 	// Collisions
-	// Player
 	private GhostControl rightStickGhost;
 	private GhostControl leftStickGhost;
-	// Drum
-	private GhostControl snareDrumGhost;
-	private GhostControl floorTomGhost;
 
 	Game() {
 		super(new StatsAppState(),
@@ -65,9 +59,17 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 				new FlyCamAppState());
 
 		kinect = new Kinect();
+		bulletAppState = new BulletAppState();
 	}
 
 	public void simpleInitApp() {
+		// Debug options
+		bulletAppState.setDebugEnabled(true);
+
+		stateManager.attach(bulletAppState);
+		bulletAppState.getPhysicsSpace().addCollisionListener(this);
+		bulletAppState.getPhysicsSpace().addTickListener(this);
+
 		assetManager.registerLocator("assets/", FileLocator.class);
 		BinaryImporter importer = BinaryImporter.getInstance();
 		importer.setAssetManager(assetManager);
@@ -80,7 +82,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "No saved node loaded.", ex);
 		}
 
-		cam.setLocation(new Vector3f(0, 1.5f, 0));
+		cam.setLocation(new Vector3f(0, 1.5f, -1));
 		cam.setRotation(new Quaternion());
 
 		// Kinect setup
@@ -125,12 +127,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 //		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
 
 		setGameObjects();
-
-		leftStick.addControl(new KinectHandControl(kinect, Hand.LEFT_HAND));
-
-		rightStick.addControl(new KinectHandControl(kinect, Hand.RIGHT_HAND));
-
-		setCollisions();
 	}
 
 	@Override
@@ -140,42 +136,53 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 	private void setGameObjects() {
 		// Player
-		leftStick = rootNode.getChild("left_stick");
-		leftStick.setUserData(StickData.CLEAR.getKey(), true);
-		rightStick = rootNode.getChild("right_stick");
-		rightStick.setUserData(StickData.CLEAR.getKey(), true);
+		leftStick = createStick("left_stick", Hand.LEFT_HAND);
+		leftStickGhost = addStickCollision(leftStick);
+
+		rightStick = createStick("right_stick", Hand.RIGHT_HAND);
+		rightStickGhost = addStickCollision(rightStick);
 
 		// Drum
-		snareDrum = rootNode.getChild("snare_drum");
-		floorTom = rootNode.getChild("floor_tom");
+		String[] drumNames = new String[] {
+				"floor_tom",
+				"ride_cymbal",
+				"mid_tom",
+				"bass_drum",
+				"high_tom",
+				"crash_cymbal",
+				"hi_hat",
+				"snare_drum"
+		};
+		for (String name : drumNames) {
+			createDrum(name, name);
+		}
 	}
 
-	private void setCollisions() {
-		// Collisions
-		BulletAppState bulletAppState = new BulletAppState();
-		stateManager.attach(bulletAppState);
+	private Spatial createStick(String name, Hand handDirection) {
+		Spatial spatial = rootNode.getChild(name);
+		spatial.setUserData(StickData.CLEAR.getKey(), true);
+		spatial.setUserData(StickData.VELOCITY.getKey(), Vector3f.ZERO);
+		spatial.addControl(new KinectHandControl(kinect, handDirection));
+		return spatial;
+	}
 
-		CollisionShape rightStickCollision = CollisionShapeFactory.createBoxShape(rightStick);
-		rightStickGhost = new GhostControl(rightStickCollision);
-		bulletAppState.getPhysicsSpace().add(rightStickGhost);
-		rightStick.addControl(rightStickGhost);
+	private GhostControl addStickCollision(Spatial stick) {
+		CollisionShape collisionShape = CollisionShapeFactory.createBoxShape(stick);
+		GhostControl ghostControl = new GhostControl(collisionShape);
+		bulletAppState.getPhysicsSpace().add(ghostControl);
+		stick.addControl(ghostControl);
+		return ghostControl;
+	}
 
-		CollisionShape leftStickCollision = CollisionShapeFactory.createBoxShape(leftStick);
-		leftStickGhost = new GhostControl(leftStickCollision);
-		bulletAppState.getPhysicsSpace().add(leftStickGhost);
-		leftStick.addControl(leftStickGhost);
+	private void createDrum(String drumName, String audioName) {
+		Spatial spatial = rootNode.getChild(drumName);
+		spatial.setUserData(DrumData.AUDIO_NAME.getKey(), audioName);
 
-		// TODO add collisions to drum parts
-		snareDrumGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
-		snareDrum.addControl(snareDrumGhost);
-		bulletAppState.getPhysicsSpace().add(snareDrumGhost);
-
-		floorTomGhost = new GhostControl(CollisionShapeFactory.createMeshShape(snareDrum));
-		floorTom.addControl(floorTomGhost);
-		bulletAppState.getPhysicsSpace().add(floorTomGhost);
-
-		bulletAppState.getPhysicsSpace().addCollisionListener(this);
-		bulletAppState.getPhysicsSpace().addTickListener(this);
+		CollisionShape collisionShape = CollisionShapeFactory.createDynamicMeshShape(spatial);
+		collisionShape.setMargin(0);
+		GhostControl ghostControl = new GhostControl(collisionShape);
+		spatial.addControl(ghostControl);
+		bulletAppState.getPhysicsSpace().add(ghostControl);
 	}
 
 	@Override
@@ -196,21 +203,21 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 			drum = ((GhostControl) a).getSpatial();
 		}
 
-		boolean handClear = stick.getUserData(StickData.CLEAR.getKey());
-		float handVelocityY = ((Vector3f) stick.getUserData(StickData.VELOCITY.getKey())).getY();
-		if (handClear) {
-			stick.setUserData(StickData.CLEAR.getKey(), false);
-			String drumName = drum.getName();
-			// TODO use collision groups so sticks can't collide with each other
-			if (!drumName.contains("stick")) {
-				playDrum(drumName, Math.abs(handVelocityY * 100));
+		if (stick != null) {
+			boolean handClear = stick.getUserData(StickData.CLEAR.getKey());
+			float handVelocityY = ((Vector3f) stick.getUserData(StickData.VELOCITY.getKey())).getY();
+			// TODO Only hit drum with downward strokes. i.e stick y velocity is negative
+			if (handClear && handVelocityY < 0) {
+				stick.setUserData(StickData.CLEAR.getKey(), false);
+				String audioName = drum.getUserData(DrumData.AUDIO_NAME.getKey());
+				// TODO use collision groups so sticks can't collide with each other
+				playDrum(audioName, Math.abs(handVelocityY * 100));
 			}
 		}
 	}
 
 	@Override
 	public void prePhysicsTick(PhysicsSpace physicsSpace, float v) {
-
 	}
 
 	@Override
@@ -224,8 +231,12 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		}
 	}
 
-	private void playDrum(String drumName, float volume) {
-		AudioNode sound = new AudioNode(assetManager, "Sounds/" + drumName + ".wav", AudioData.DataType.Buffer);
+	/**Plays the sound of the drum
+	 * @param audioName name of the sound file. Must be a wav and end as ".wav"
+	 * @param volume The volume is proportional the hit force
+	 */
+	private void playDrum(String audioName, float volume) {
+		AudioNode sound = new AudioNode(assetManager, "Sounds/" + audioName + ".wav", AudioData.DataType.Buffer);
 		sound.setPositional(false);
 		sound.setVolume(volume);
 		sound.playInstance();
