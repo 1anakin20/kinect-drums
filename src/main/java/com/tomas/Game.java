@@ -173,7 +173,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		CollisionShape collisionShape = CollisionShapeFactory.createBoxShape(stick);
 		GhostControl ghostControl = new GhostControl(collisionShape);
 		ghostControl.setCollisionGroup(CollisionGroups.STICKS.getCollisionGroup());
-		ghostControl.setCollideWithGroups(CollisionGroups.STICKS.getCollisionGroup());
+		ghostControl.setCollideWithGroups(CollisionGroups.DRUMS.getCollisionGroup());
 		bulletAppState.getPhysicsSpace().add(ghostControl);
 		stick.addControl(ghostControl);
 		stick.setUserData(StickData.COLLIDED.getKey(), new ArrayList<PhysicsCollisionObject>());
@@ -188,7 +188,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		collisionShape.setMargin(0);
 		GhostControl ghostControl = new GhostControl(collisionShape);
 		ghostControl.setCollisionGroup(CollisionGroups.DRUMS.getCollisionGroup());
-		ghostControl.setCollideWithGroups(CollisionGroups.STICKS.getCollisionGroup());
 		spatial.addControl(ghostControl);
 		bulletAppState.getPhysicsSpace().add(ghostControl);
 	}
