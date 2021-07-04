@@ -213,11 +213,9 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		if (stick != null) {
 			boolean previouslyCollided = checkStickCollisions(stick, drumGhost);
 			float handVelocityY = ((Vector3f) stick.getUserData(StickData.VELOCITY.getKey())).getY();
-			// TODO Only hit drum with downward strokes. i.e stick y velocity is negative
 			if (!previouslyCollided && handVelocityY < 0) {
 				addToCollided(stick, drumGhost);
 				String audioName = ((GhostControl) drumGhost).getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
-				// TODO use collision groups so sticks can't collide with each other
 				playDrum(audioName, Math.abs(handVelocityY * 100));
 			}
 		}
