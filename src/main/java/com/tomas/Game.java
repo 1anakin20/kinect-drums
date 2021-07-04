@@ -230,23 +230,20 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	@Override
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
 		// TODO refactor this. Checks if the stick left the previously hit drum hit boxes to enable them again
-		List<PhysicsCollisionObject> overlapping = rightStickGhost.getOverlappingObjects();
-		List<PhysicsCollisionObject> stickCollided = rightStick.getUserData(StickData.COLLIDED.getKey());
+		removeStickClearedCollisions(rightStick, rightStickGhost);
+		removeStickClearedCollisions(leftStick, leftStickGhost);
+	}
+
+	private void removeStickClearedCollisions(Spatial stick, GhostControl stickGhost) {
+		List<PhysicsCollisionObject> overlapping = stickGhost.getOverlappingObjects();
+		List<PhysicsCollisionObject> stickCollided = stick.getUserData(StickData.COLLIDED.getKey());
 		List<PhysicsCollisionObject> activeCollisions = new ArrayList<>();
 		for (PhysicsCollisionObject collisionObject : stickCollided) {
 			if (overlapping.contains(collisionObject)) {
 				activeCollisions.add(collisionObject);
 			}
 		}
-		rightStick.setUserData(StickData.COLLIDED.getKey(), activeCollisions);
-
-		if (rightStickGhost.getOverlappingObjects().isEmpty()) {
-			rightStick.setUserData(StickData.CLEAR.getKey(), true);
-		}
-
-		if (leftStickGhost.getOverlappingObjects().isEmpty()) {
-			leftStick.setUserData(StickData.CLEAR.getKey(), true);
-		}
+		stick.setUserData(StickData.COLLIDED.getKey(), activeCollisions);
 	}
 
 	private boolean checkStickCollisions(Spatial stick, PhysicsCollisionObject collided) {
