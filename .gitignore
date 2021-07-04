@@ -4,3 +4,4 @@ kinect_drums.iml
 .jmonkeybuilder/
 *.swp
 *.un~
+.gradle/
