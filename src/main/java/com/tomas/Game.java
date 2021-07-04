@@ -176,7 +176,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		ghostControl.setCollideWithGroups(CollisionGroups.STICKS.getCollisionGroup());
 		bulletAppState.getPhysicsSpace().add(ghostControl);
 		stick.addControl(ghostControl);
-		stick.setUserData(StickData.COLLIDED.getKey(), new ArrayList<GhostControl>());
+		stick.setUserData(StickData.COLLIDED.getKey(), new ArrayList<PhysicsCollisionObject>());
 		return ghostControl;
 	}
 
@@ -202,13 +202,13 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		String bName = ((GhostControl) b).getSpatial().getName();
 
 		Spatial stick = null;
-		GhostControl drumGhost = null;
+		PhysicsCollisionObject drumGhost = null;
 		if (aName.equals("right_stick") || aName.equals("left_stick")) {
 			stick = ((GhostControl) a).getSpatial();
-			drumGhost = (GhostControl) b;
+			drumGhost = b;
 		} else if (bName.equals("right_stick") || bName.equals(("left_stick"))) {
 			stick = ((GhostControl) b).getSpatial();
-			drumGhost = (GhostControl) a;
+			drumGhost = a;
 		}
 
 		if (stick != null) {
@@ -217,7 +217,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 			// TODO Only hit drum with downward strokes. i.e stick y velocity is negative
 			if (!previouslyCollided && handVelocityY < 0) {
 				addToCollided(stick, drumGhost);
-				String audioName = drumGhost.getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
+				String audioName = ((GhostControl) drumGhost).getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
 				// TODO use collision groups so sticks can't collide with each other
 				playDrum(audioName, Math.abs(handVelocityY * 100));
 			}
@@ -232,19 +232,14 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
 		// TODO refactor this. Checks if the stick left the previously hit drum hit boxes to enable them again
 		List<PhysicsCollisionObject> overlapping = rightStickGhost.getOverlappingObjects();
-		List<GhostControl> overlappingGhosts = new ArrayList<>();
-		for (PhysicsCollisionObject physicsCollisionObject : overlapping) {
-			overlappingGhosts.add((GhostControl) physicsCollisionObject);
-		}
-
-		List<GhostControl> ghostControls = rightStick.getUserData(StickData.COLLIDED.getKey());
-		List<GhostControl> activeGhostControls = new ArrayList<>();
-		for (GhostControl ghostControl : ghostControls) {
-			if (overlappingGhosts.contains(ghostControl)) {
-				activeGhostControls.add(ghostControl);
+		List<PhysicsCollisionObject> stickCollided = rightStick.getUserData(StickData.COLLIDED.getKey());
+		List<PhysicsCollisionObject> activeCollisions = new ArrayList<>();
+		for (PhysicsCollisionObject collisionObject : stickCollided) {
+			if (overlapping.contains(collisionObject)) {
+				activeCollisions.add(collisionObject);
 			}
 		}
-		rightStick.setUserData(StickData.COLLIDED.getKey(), activeGhostControls);
+		rightStick.setUserData(StickData.COLLIDED.getKey(), activeCollisions);
 
 		if (rightStickGhost.getOverlappingObjects().isEmpty()) {
 			rightStick.setUserData(StickData.CLEAR.getKey(), true);
@@ -255,13 +250,13 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		}
 	}
 
-	private boolean checkStickCollisions(Spatial stick, GhostControl collided) {
+	private boolean checkStickCollisions(Spatial stick, PhysicsCollisionObject collided) {
 		List<GhostControl> collisions = stick.getUserData(StickData.COLLIDED.getKey());
 		return collisions.contains(collided);
 	}
 
-	private void addToCollided(Spatial stick, GhostControl collided) {
-		List<GhostControl> collisions = stick.getUserData(StickData.COLLIDED.getKey());
+	private void addToCollided(Spatial stick, PhysicsCollisionObject collided) {
+		List<PhysicsCollisionObject> collisions = stick.getUserData(StickData.COLLIDED.getKey());
 		collisions.add(collided);
 	}
 
