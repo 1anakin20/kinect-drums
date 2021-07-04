@@ -1,4 +1,4 @@
-package com.tomas.drumkit;
+package com.tomas.properties;
 
 public enum StickData {
 	CLEAR("clear"),

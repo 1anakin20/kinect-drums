@@ -24,11 +24,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
-import com.tomas.drumkit.StickData;
-import com.tomas.game_objects.DrumData;
-import com.tomas.game_objects.Hand;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.control.KinectHandControl;
+import com.tomas.properties.CollisionGroups;
+import com.tomas.properties.DrumData;
+import com.tomas.properties.Hand;
+import com.tomas.properties.StickData;
 import wiiusej.Wiimote;
 
 import java.io.File;
@@ -169,6 +170,8 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	private GhostControl addStickCollision(Spatial stick) {
 		CollisionShape collisionShape = CollisionShapeFactory.createBoxShape(stick);
 		GhostControl ghostControl = new GhostControl(collisionShape);
+		ghostControl.setCollisionGroup(CollisionGroups.STICKS.getCollisionGroup());
+		ghostControl.setCollideWithGroups(CollisionGroups.STICKS.getCollisionGroup());
 		bulletAppState.getPhysicsSpace().add(ghostControl);
 		stick.addControl(ghostControl);
 		return ghostControl;
@@ -181,6 +184,8 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		CollisionShape collisionShape = CollisionShapeFactory.createDynamicMeshShape(spatial);
 		collisionShape.setMargin(0);
 		GhostControl ghostControl = new GhostControl(collisionShape);
+		ghostControl.setCollisionGroup(CollisionGroups.DRUMS.getCollisionGroup());
+		ghostControl.setCollideWithGroups(CollisionGroups.STICKS.getCollisionGroup());
 		spatial.addControl(ghostControl);
 		bulletAppState.getPhysicsSpace().add(ghostControl);
 	}

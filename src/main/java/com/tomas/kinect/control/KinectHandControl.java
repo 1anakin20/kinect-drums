@@ -4,8 +4,9 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.control.AbstractControl;
-import com.tomas.drumkit.StickData;
 import com.tomas.kinect.Kinect;
+import com.tomas.properties.Hand;
+import com.tomas.properties.StickData;
 
 public class KinectHandControl extends AbstractControl {
 	private Kinect kinect;
@@ -13,7 +14,6 @@ public class KinectHandControl extends AbstractControl {
 	private long previousTime;
 	private Vector3f previousHandLocation;
 	private Vector3f handVelocity;
-	private boolean handClear = true;
 
 	public KinectHandControl(Kinect kinect, Hand handDirection) {
 		this.kinect = kinect;
@@ -59,11 +59,5 @@ public class KinectHandControl extends AbstractControl {
 
 	@Override
 	protected void controlRender(RenderManager rm, ViewPort vp) {
-	}
-
-	private void checkHandClear() {
-		if (handVelocity.getY() > 0) {
-			handClear = true;
-		}
 	}
 }
