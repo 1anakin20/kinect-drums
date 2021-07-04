@@ -229,7 +229,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 	@Override
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
-		// TODO refactor this. Checks if the stick left the previously hit drum hit boxes to enable them again
 		removeStickClearedCollisions(rightStick, rightStickGhost);
 		removeStickClearedCollisions(leftStick, leftStickGhost);
 	}
