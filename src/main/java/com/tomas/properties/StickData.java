@@ -2,7 +2,8 @@ package com.tomas.properties;
 
 public enum StickData {
 	CLEAR("clear"),
-	VELOCITY("velocity");
+	VELOCITY("velocity"),
+	COLLIDED("collided");
 
 	private final String key;
 

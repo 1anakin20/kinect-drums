@@ -34,6 +34,8 @@ import wiiusej.Wiimote;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -174,6 +176,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		ghostControl.setCollideWithGroups(CollisionGroups.STICKS.getCollisionGroup());
 		bulletAppState.getPhysicsSpace().add(ghostControl);
 		stick.addControl(ghostControl);
+		stick.setUserData(StickData.COLLIDED.getKey(), new ArrayList<GhostControl>());
 		return ghostControl;
 	}
 
@@ -199,22 +202,22 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		String bName = ((GhostControl) b).getSpatial().getName();
 
 		Spatial stick = null;
-		Spatial drum = null;
+		GhostControl drumGhost = null;
 		if (aName.equals("right_stick") || aName.equals("left_stick")) {
 			stick = ((GhostControl) a).getSpatial();
-			drum = ((GhostControl) b).getSpatial();
+			drumGhost = (GhostControl) b;
 		} else if (bName.equals("right_stick") || bName.equals(("left_stick"))) {
 			stick = ((GhostControl) b).getSpatial();
-			drum = ((GhostControl) a).getSpatial();
+			drumGhost = (GhostControl) a;
 		}
 
 		if (stick != null) {
-			boolean handClear = stick.getUserData(StickData.CLEAR.getKey());
+			boolean previouslyCollided = checkStickCollisions(stick, drumGhost);
 			float handVelocityY = ((Vector3f) stick.getUserData(StickData.VELOCITY.getKey())).getY();
 			// TODO Only hit drum with downward strokes. i.e stick y velocity is negative
-			if (handClear && handVelocityY < 0) {
-				stick.setUserData(StickData.CLEAR.getKey(), false);
-				String audioName = drum.getUserData(DrumData.AUDIO_NAME.getKey());
+			if (!previouslyCollided && handVelocityY < 0) {
+				addToCollided(stick, drumGhost);
+				String audioName = drumGhost.getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
 				// TODO use collision groups so sticks can't collide with each other
 				playDrum(audioName, Math.abs(handVelocityY * 100));
 			}
@@ -227,6 +230,22 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 	@Override
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
+		// TODO refactor this. Checks if the stick left the previously hit drum hit boxes to enable them again
+		List<PhysicsCollisionObject> overlapping = rightStickGhost.getOverlappingObjects();
+		List<GhostControl> overlappingGhosts = new ArrayList<>();
+		for (PhysicsCollisionObject physicsCollisionObject : overlapping) {
+			overlappingGhosts.add((GhostControl) physicsCollisionObject);
+		}
+
+		List<GhostControl> ghostControls = rightStick.getUserData(StickData.COLLIDED.getKey());
+		List<GhostControl> activeGhostControls = new ArrayList<>();
+		for (GhostControl ghostControl : ghostControls) {
+			if (overlappingGhosts.contains(ghostControl)) {
+				activeGhostControls.add(ghostControl);
+			}
+		}
+		rightStick.setUserData(StickData.COLLIDED.getKey(), activeGhostControls);
+
 		if (rightStickGhost.getOverlappingObjects().isEmpty()) {
 			rightStick.setUserData(StickData.CLEAR.getKey(), true);
 		}
@@ -234,6 +253,16 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		if (leftStickGhost.getOverlappingObjects().isEmpty()) {
 			leftStick.setUserData(StickData.CLEAR.getKey(), true);
 		}
+	}
+
+	private boolean checkStickCollisions(Spatial stick, GhostControl collided) {
+		List<GhostControl> collisions = stick.getUserData(StickData.COLLIDED.getKey());
+		return collisions.contains(collided);
+	}
+
+	private void addToCollided(Spatial stick, GhostControl collided) {
+		List<GhostControl> collisions = stick.getUserData(StickData.COLLIDED.getKey());
+		collisions.add(collided);
 	}
 
 	/**Plays the sound of the drum
