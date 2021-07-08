@@ -25,6 +25,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
 import com.tomas.kinect.Kinect;
+import com.tomas.kinect.KinectEvents;
 import com.tomas.kinect.control.KinectHandControl;
 import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.DrumData;
@@ -39,7 +40,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
+public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener, KinectEvents {
 	private BulletAppState bulletAppState;
 
 	private Kinect kinect;
@@ -62,6 +63,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 				new FlyCamAppState());
 
 		kinect = new Kinect();
+		kinect.registerListener(this);
 		bulletAppState = new BulletAppState();
 	}
 
@@ -90,10 +92,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 		// Kinect setup
 		// TODO load it in a background thread and notify when it's loaded. If it fails show error
-		if (kinect.start(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480) == 1) {
-			System.out.println("Kinect loaded");
-		}
-		kinect.startSkeletonTracking(true);
+		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, true);
 
 
 		// Wiimote setup
@@ -268,5 +267,15 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		sound.setPositional(false);
 		sound.setVolume(volume);
 		sound.playInstance();
+	}
+
+	@Override
+	public void kinectLoaded() {
+		System.out.println("Kinect loaded");
+	}
+
+	@Override
+	public void kinectCouldNotLoad() {
+		System.out.println("Kinect could not load");
 	}
 }
