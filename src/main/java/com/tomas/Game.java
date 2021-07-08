@@ -216,7 +216,8 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 			if (!previouslyCollided && handVelocityY < 0) {
 				addToCollided(stick, drumGhost);
 				String audioName = ((GhostControl) drumGhost).getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
-				playDrum(audioName, Math.abs(handVelocityY * 100));
+				float hitForce = calculateHitForce(stick);
+				playDrum(audioName, hitForce);
 			}
 		}
 	}
@@ -251,6 +252,11 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	private void addToCollided(Spatial stick, PhysicsCollisionObject collided) {
 		List<PhysicsCollisionObject> collisions = stick.getUserData(StickData.COLLIDED.getKey());
 		collisions.add(collided);
+	}
+
+	private float calculateHitForce(Spatial stick) {
+		Vector3f velocity = stick.getUserData(StickData.VELOCITY.getKey());
+		return (float) Math.min(1, Math.max(0, Math.pow(Math.abs(velocity.y * 100), 1.5)));
 	}
 
 	/**Plays the sound of the drum
