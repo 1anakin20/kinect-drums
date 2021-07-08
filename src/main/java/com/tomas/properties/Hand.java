@@ -1,4 +1,4 @@
-package com.tomas.kinect.control;
+package com.tomas.properties;
 
 public enum Hand {
 	LEFT_HAND,

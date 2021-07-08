@@ -5,3 +5,4 @@ kinect_drums.iml
 *.swp
 *.un~
 .gradle/
+*.iml
