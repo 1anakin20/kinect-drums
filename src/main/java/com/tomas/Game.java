@@ -24,6 +24,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
+import com.tomas.gui.KinectStatusGUI;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.KinectEvents;
 import com.tomas.kinect.control.KinectHandControl;
@@ -93,7 +94,8 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		// Kinect setup
 		// TODO load it in a background thread and notify when it's loaded. If it fails show error
 		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, true);
-
+		KinectStatusGUI kinectStatusGUI = new KinectStatusGUI(kinect);
+		stateManager.attach(kinectStatusGUI);
 
 		// Wiimote setup
 //		WiiUseApiManager wiiUseApiManager;
