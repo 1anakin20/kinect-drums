@@ -5,6 +5,7 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import com.tomas.kinect.Kinect;
 import de.lessvoid.nifty.Nifty;
+import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.builder.LayerBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.builder.ScreenBuilder;
@@ -49,8 +50,13 @@ public class KinectStatusGUI extends BaseAppState {
 							alignCenter();
 							valignTop();
 							backgroundColor("#FF0000");
-							height("20");
-							width("20");
+							height("32");
+							width("32");
+							image(new ImageBuilder() {{
+								filename("Interface/kinect.png");
+								height("32");
+								width("32");
+							}});
 						}});
 					}});
 				}}.build(nifty)
