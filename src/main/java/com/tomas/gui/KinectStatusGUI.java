@@ -3,18 +3,18 @@ package com.tomas.gui;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
-import com.tomas.kinect.Kinect;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.ImageBuilder;
 import de.lessvoid.nifty.builder.LayerBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.builder.ScreenBuilder;
+import de.lessvoid.nifty.screen.ScreenController;
 
 public class KinectStatusGUI extends BaseAppState {
-	private Kinect kinect;
+	private ScreenController controller;
 
-	public KinectStatusGUI(Kinect kinect) {
-		this.kinect = kinect;
+	public KinectStatusGUI(ScreenController controller) {
+		this.controller = controller;
 	}
 
 	@Override
@@ -39,8 +39,6 @@ public class KinectStatusGUI extends BaseAppState {
 		Nifty nifty = niftyDisplay.getNifty();
 		getApplication().getGuiViewPort().addProcessor(niftyDisplay);
 		nifty.addScreen("start", new ScreenBuilder("start") {{
-					KinectStatusController controller = new KinectStatusController();
-					kinect.registerListener(controller);
 					controller(controller);
 					layer(new LayerBuilder("background") {{
 						childLayoutCenter();
