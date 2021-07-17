@@ -93,13 +93,25 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		cam.setLocation(new Vector3f(0, 1.5f, -1));
 		cam.setRotation(new Quaternion());
 
+		// GUI setup
+		NiftyJmeDisplay niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(
+				getAssetManager(),
+				getInputManager(),
+				getAudioRenderer(),
+				getGuiViewPort()
+		);
+
+		Nifty nifty = niftyDisplay.getNifty();
+		getGuiViewPort().addProcessor(niftyDisplay);
+		KinectStatusController kinectStatusController = new KinectStatusController();
+		nifty.fromXml("Interface/GUI/kinectStatusGUI.xml", "start", kinectStatusController);
+//		nifty.setDebugOptionPanelColors(true);
+		nifty.gotoScreen("start");
+
 		// Kinect setup
 		// TODO load it in a background thread and notify when it's loaded. If it fails show error
 		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, true);
-		KinectStatusController kinectStatusController = new KinectStatusController();
 		kinect.registerListener(kinectStatusController);
-//		KinectStatusGUI kinectStatusGUI = new KinectStatusGUI(kinectStatusController);
-		stateManager.attach(kinectStatusController);
 
 		// Wiimote setup
 //		WiiUseApiManager wiiUseApiManager;
@@ -133,20 +145,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 //
 //		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
 //		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
-
-		// GUI setup
-		NiftyJmeDisplay niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(
-				getAssetManager(),
-				getInputManager(),
-				getAudioRenderer(),
-				getGuiViewPort()
-		);
-
-		Nifty nifty = niftyDisplay.getNifty();
-		getGuiViewPort().addProcessor(niftyDisplay);
-		nifty.fromXml("Interface/GUI/kinectStatusGUI.xml", "start", kinectStatusController);
-		nifty.setDebugOptionPanelColors(true);
-		nifty.gotoScreen("start");
 
 		setGameObjects();
 	}
