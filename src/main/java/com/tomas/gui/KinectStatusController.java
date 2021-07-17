@@ -4,6 +4,7 @@ import com.tomas.kinect.KinectEvents;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
 import de.lessvoid.nifty.elements.render.PanelRenderer;
+import de.lessvoid.nifty.elements.render.TextRenderer;
 import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 import de.lessvoid.nifty.tools.Color;
@@ -38,6 +39,7 @@ public class KinectStatusController implements ScreenController, KinectEvents {
 
 	@Override
 	public void kinectCouldNotLoad() {
-
+		Element message = nifty.getCurrentScreen().findElementById("kinect_message");
+		message.getRenderer(TextRenderer.class).setText("Kinect could not load. Make sure there isn't another application using it.");
 	}
 }

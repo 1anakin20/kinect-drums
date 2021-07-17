@@ -21,11 +21,11 @@ import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.export.binary.BinaryImporter;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
 import com.tomas.gui.KinectStatusController;
-import com.tomas.gui.KinectStatusGUI;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.KinectEvents;
 import com.tomas.kinect.control.KinectHandControl;
@@ -33,6 +33,7 @@ import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.DrumData;
 import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
+import de.lessvoid.nifty.Nifty;
 import wiiusej.Wiimote;
 
 import java.io.File;
@@ -92,13 +93,25 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		cam.setLocation(new Vector3f(0, 1.5f, -1));
 		cam.setRotation(new Quaternion());
 
+		// GUI setup
+		NiftyJmeDisplay niftyDisplay = NiftyJmeDisplay.newNiftyJmeDisplay(
+				getAssetManager(),
+				getInputManager(),
+				getAudioRenderer(),
+				getGuiViewPort()
+		);
+
+		Nifty nifty = niftyDisplay.getNifty();
+		getGuiViewPort().addProcessor(niftyDisplay);
+		KinectStatusController kinectStatusController = new KinectStatusController();
+		nifty.fromXml("Interface/GUI/kinectStatusGUI.xml", "start", kinectStatusController);
+//		nifty.setDebugOptionPanelColors(true);
+		nifty.gotoScreen("start");
+
 		// Kinect setup
 		// TODO load it in a background thread and notify when it's loaded. If it fails show error
 		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, true);
-		KinectStatusController kinectStatusController = new KinectStatusController();
 		kinect.registerListener(kinectStatusController);
-		KinectStatusGUI kinectStatusGUI = new KinectStatusGUI(kinectStatusController);
-		stateManager.attach(kinectStatusGUI);
 
 		// Wiimote setup
 //		WiiUseApiManager wiiUseApiManager;
