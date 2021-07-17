@@ -14,12 +14,14 @@ public class KinectHandControl extends AbstractControl {
 	private long previousTime;
 	private Vector3f previousHandLocation;
 	private Vector3f handVelocity;
+	private Velocity velocity;
 
 	public KinectHandControl(Kinect kinect, Hand handDirection) {
 		this.kinect = kinect;
 		this.handDirection = handDirection;
 		previousTime = 0;
 		previousHandLocation = new Vector3f();
+		velocity = new Velocity();
 	}
 
 	@Override
@@ -40,20 +42,7 @@ public class KinectHandControl extends AbstractControl {
 		}
 
 		spatial.setLocalTranslation(translation);
-
-		if (previousTime == 0) {
-			previousHandLocation = translation;
-		}
-
-		// Velocity
-		long currentTime = System.currentTimeMillis();
-		long timeDifference = currentTime - previousTime;
-		handVelocity = translation.subtract(previousHandLocation).divide(timeDifference);
-
-		// Update previous values
-		previousHandLocation = translation;
-		previousTime = currentTime;
-
+		Vector3f handVelocity = velocity.calculateVelocity(translation);
 		spatial.setUserData(StickData.VELOCITY.getKey(), handVelocity);
 	}
 
