@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nifty xmlns="http://nifty-gui.lessvoid.com/nifty-gui" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<screen id="start" controller="kinectStatusController">
+		<layer childLayout="center">
+			<panel childLayout="vertical" valign="top" >
+				<image filename="Interface/Images/kinect.png" align="center" />
+				<text font="aurulent-sans-16.fnt" color="#ff0f" text="Messages will show here" />
+			</panel>
+		</layer>
+	</screen>
+</nifty>

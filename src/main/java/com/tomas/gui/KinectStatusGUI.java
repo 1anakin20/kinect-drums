@@ -4,10 +4,8 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.niftygui.NiftyJmeDisplay;
 import de.lessvoid.nifty.Nifty;
-import de.lessvoid.nifty.builder.ImageBuilder;
-import de.lessvoid.nifty.builder.LayerBuilder;
-import de.lessvoid.nifty.builder.PanelBuilder;
-import de.lessvoid.nifty.builder.ScreenBuilder;
+import de.lessvoid.nifty.builder.*;
+import de.lessvoid.nifty.screen.Screen;
 import de.lessvoid.nifty.screen.ScreenController;
 
 public class KinectStatusGUI extends BaseAppState {
@@ -38,28 +36,36 @@ public class KinectStatusGUI extends BaseAppState {
 
 		Nifty nifty = niftyDisplay.getNifty();
 		getApplication().getGuiViewPort().addProcessor(niftyDisplay);
-		nifty.addScreen("start", new ScreenBuilder("start") {{
-					controller(controller);
-					layer(new LayerBuilder("background") {{
-						childLayoutCenter();
+		Screen start = new ScreenBuilder("start") {{
+			controller(controller);
+			layer(new LayerBuilder("background") {{
+				childLayoutCenter();
+				childLayoutVertical();
 
-						panel(new PanelBuilder("kinect_status") {{
-							childLayoutCenter();
-							alignCenter();
-							valignTop();
-							backgroundColor("#FF0000");
-							height("32");
-							width("32");
-							image(new ImageBuilder() {{
-								filename("Interface/kinect.png");
-								height("32");
-								width("32");
-							}});
-						}});
+				panel(new PanelBuilder("kinect_status") {{
+					alignCenter();
+					valignTop();
+					backgroundColor("#FF0000");
+					height("32");
+					width("32");
+					image(new ImageBuilder() {{
+						filename("Interface/kinect.png");
+						height("32");
+						width("32");
 					}});
-				}}.build(nifty)
-		);
 
+					text(new TextBuilder("message") {{
+						alignCenter();
+						valignTop();
+						font("aurulent-sans-16.fnt");
+						color("#FFFF00");
+						text("messages will appear here");
+					}});
+				}});
+			}});
+		}}.build(nifty);
+
+		nifty.addScreen("start" ,start);
 		nifty.gotoScreen("start");
 	}
 

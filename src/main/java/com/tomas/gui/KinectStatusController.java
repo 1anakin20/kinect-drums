@@ -1,5 +1,7 @@
 package com.tomas.gui;
 
+import com.jme3.app.Application;
+import com.jme3.app.state.BaseAppState;
 import com.tomas.kinect.KinectEvents;
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.elements.Element;
@@ -10,7 +12,7 @@ import de.lessvoid.nifty.tools.Color;
 
 import javax.annotation.Nonnull;
 
-public class KinectStatusController implements ScreenController, KinectEvents {
+public class KinectStatusController extends BaseAppState implements ScreenController, KinectEvents {
 	private Nifty nifty;
 	private Screen screen;
 
@@ -38,6 +40,26 @@ public class KinectStatusController implements ScreenController, KinectEvents {
 
 	@Override
 	public void kinectCouldNotLoad() {
+
+	}
+
+	@Override
+	protected void initialize(Application app) {
+
+	}
+
+	@Override
+	protected void cleanup(Application app) {
+
+	}
+
+	@Override
+	protected void onEnable() {
+
+	}
+
+	@Override
+	protected void onDisable() {
 
 	}
 }
