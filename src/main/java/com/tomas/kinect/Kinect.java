@@ -9,9 +9,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Kinect extends J4KSDK {
-	private Joint leftHand;
-	private Joint rightHand;
+	private Joint leftHand, rightHand, rightKnee;
 	private final List<KinectEvents> listeners = new ArrayList<>();
+	private boolean isInitialPose = false;
+	private Joint initialRightKnee;
 
 	@Override
 	public void onDepthFrameEvent(short[] shorts, int[] ints, int[] ints1) {
@@ -32,19 +33,17 @@ public class Kinect extends J4KSDK {
 			Skeleton playerSkeleton = Skeleton.getSkeleton(firstTracked, floats, booleans);
 			leftHand = new Joint(playerSkeleton, Skeleton.HAND_LEFT);
 			rightHand = new Joint(playerSkeleton, Skeleton.HAND_RIGHT);
+			rightKnee = new Joint(playerSkeleton, Skeleton.KNEE_RIGHT);
+
+			if (!isInitialPose) {
+				initialRightKnee = rightKnee;
+				isInitialPose = true;
+			}
 		}
 	}
 
 	@Override
 	public void onVideoFrameEvent(byte[] bytes) {
-	}
-
-	public Joint getLeftHand() {
-		return leftHand;
-	}
-
-	public Joint getRightHand() {
-		return rightHand;
 	}
 
 	public void loadKinect(boolean skeleton, int depth, int video, boolean seated) {
@@ -79,5 +78,25 @@ public class Kinect extends J4KSDK {
 		for (KinectEvents listener : listeners) {
 			listener.kinectCouldNotLoad();
 		}
+	}
+
+	public Joint getLeftHand() {
+		return leftHand;
+	}
+
+	public Joint getRightHand() {
+		return rightHand;
+	}
+
+	public Joint getRightKnee() {
+		return rightKnee;
+	}
+
+	public boolean isInitialPose() {
+		return isInitialPose;
+	}
+
+	public Joint getInitialRightKnee() {
+		return initialRightKnee;
 	}
 }

@@ -26,9 +26,11 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
 import com.tomas.gui.KinectStatusController;
+import com.tomas.kinect.Joint;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.KinectEvents;
 import com.tomas.kinect.control.KinectHandControl;
+import com.tomas.kinect.control.Velocity;
 import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.DrumData;
 import com.tomas.properties.Hand;
@@ -56,6 +58,10 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	// Collisions
 	private GhostControl rightStickGhost;
 	private GhostControl leftStickGhost;
+
+	private Velocity bassPedalVelocity = new Velocity();
+	private boolean isBassPedalEnabled = false;
+	private boolean canHitBass = false;
 
 	Game() {
 		super(new StatsAppState(),
@@ -110,7 +116,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 		// Kinect setup
 		// TODO load it in a background thread and notify when it's loaded. If it fails show error
-		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, true);
+		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, false);
 		kinect.registerListener(kinectStatusController);
 
 		// Wiimote setup
@@ -167,7 +173,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 				"floor_tom",
 				"ride_cymbal",
 				"mid_tom",
-				"bass_drum",
 				"high_tom",
 				"crash_cymbal",
 				"hi_hat",
@@ -233,7 +238,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 			if (!previouslyCollided && handVelocityY < 0) {
 				addToCollided(stick, drumGhost);
 				String audioName = ((GhostControl) drumGhost).getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
-				float hitForce = calculateHitForce(stick);
+				float hitForce = spatialHitForce(stick);
 				playDrum(audioName, hitForce);
 			}
 		}
@@ -247,6 +252,30 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
 		removeStickClearedCollisions(rightStick, rightStickGhost);
 		removeStickClearedCollisions(leftStick, leftStickGhost);
+
+		// Play the bass drum
+		if (kinect.isInitialPose()) {
+			Joint rightKneeJoint = kinect.getRightKnee();
+			if (rightKneeJoint != null) {
+				Vector3f rightKneeTranslation = rightKneeJoint.getTranslation();
+				if (rightKneeTranslation.getY() > kinect.getInitialRightKnee().getTranslation().getY() + 0.05) {
+					isBassPedalEnabled = true;
+					System.out.println("rightKneeTranslation = " + rightKneeTranslation);
+				} else {
+					if (isBassPedalEnabled) {
+						isBassPedalEnabled = false;
+						canHitBass = true;
+					}
+				}
+
+				Vector3f bassPedalVelocityVector = bassPedalVelocity.calculateVelocity(rightKneeTranslation);
+				if (bassPedalVelocityVector.getY() < 0 && canHitBass) {
+					canHitBass = false;
+					float bassIntensity = calculateHitForce(bassPedalVelocityVector);
+					playDrum("bass_drum", bassIntensity);
+				}
+			}
+		}
 	}
 
 	private void removeStickClearedCollisions(Spatial stick, GhostControl stickGhost) {
@@ -271,8 +300,12 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		collisions.add(collided);
 	}
 
-	private float calculateHitForce(Spatial stick) {
+	private float spatialHitForce(Spatial stick) {
 		Vector3f velocity = stick.getUserData(StickData.VELOCITY.getKey());
+		return calculateHitForce(velocity);
+	}
+
+	private float calculateHitForce(Vector3f velocity) {
 		return (float) Math.min(1, Math.max(0, Math.pow(Math.abs(velocity.y * 100), 1.5)));
 	}
 
