@@ -29,7 +29,6 @@ import com.tomas.appstates.SticksAppState;
 import com.tomas.gui.KinectStatusController;
 import com.tomas.kinect.Joint;
 import com.tomas.kinect.Kinect;
-import com.tomas.kinect.KinectEvents;
 import com.tomas.kinect.control.Velocity;
 import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.DrumData;
@@ -44,7 +43,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener, KinectEvents {
+public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
 	private BulletAppState bulletAppState;
 	private SticksAppState sticksAppState;
 
@@ -67,7 +66,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 				new FlyCamAppState());
 
 		kinect = Kinect.getInstance();
-		kinect.registerListener(this);
 		bulletAppState = new BulletAppState();
 	}
 
@@ -289,16 +287,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		sound.setPositional(false);
 		sound.setVolume(volume);
 		sound.playInstance();
-	}
-
-	@Override
-	public void kinectLoaded() {
-		System.out.println("Kinect loaded");
-	}
-
-	@Override
-	public void kinectCouldNotLoad() {
-		System.out.println("Kinect could not load");
 	}
 
 	public BulletAppState getBulletAppState() {
