@@ -9,10 +9,21 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Kinect extends J4KSDK {
+	private static Kinect instance = null;
 	private Joint leftHand, rightHand, rightKnee;
 	private final List<KinectEvents> listeners = new ArrayList<>();
 	private boolean isInitialPose = false;
 	private Joint initialRightKnee;
+
+	private Kinect() {
+	}
+
+	public static Kinect getInstance() {
+		if (instance == null) {
+			instance = new Kinect();
+		}
+		return instance;
+	}
 
 	@Override
 	public void onDepthFrameEvent(short[] shorts, int[] ints, int[] ints1) {
