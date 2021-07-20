@@ -25,15 +25,14 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
+import com.tomas.appstates.SticksAppState;
 import com.tomas.gui.KinectStatusController;
 import com.tomas.kinect.Joint;
 import com.tomas.kinect.Kinect;
 import com.tomas.kinect.KinectEvents;
-import com.tomas.kinect.control.KinectHandControl;
 import com.tomas.kinect.control.Velocity;
 import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.DrumData;
-import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
 import de.lessvoid.nifty.Nifty;
 import wiiusej.Wiimote;
@@ -47,17 +46,13 @@ import java.util.logging.Logger;
 
 public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener, KinectEvents {
 	private BulletAppState bulletAppState;
+	private SticksAppState sticksAppState;
 
 	private Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
 
-	// Player
-	private Spatial rightStick;
-	private Spatial leftStick;
-	// Collisions
-	private GhostControl rightStickGhost;
-	private GhostControl leftStickGhost;
+
 
 	private Velocity bassPedalVelocity = new Velocity();
 	private boolean isBassPedalEnabled = false;
@@ -71,7 +66,7 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 				// TODO Change fly cam to static non-movable camera
 				new FlyCamAppState());
 
-		kinect = new Kinect();
+		kinect = Kinect.getInstance();
 		kinect.registerListener(this);
 		bulletAppState = new BulletAppState();
 	}
@@ -151,6 +146,8 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 //
 //		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
 //		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
+		sticksAppState = new SticksAppState();
+		stateManager.attach(sticksAppState);
 
 		setGameObjects();
 	}
@@ -161,13 +158,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	}
 
 	private void setGameObjects() {
-		// Player
-		leftStick = createStick("left_stick", Hand.LEFT_HAND);
-		leftStickGhost = addStickCollision(leftStick);
-
-		rightStick = createStick("right_stick", Hand.RIGHT_HAND);
-		rightStickGhost = addStickCollision(rightStick);
-
 		// Drum
 		String[] drumNames = new String[] {
 				"floor_tom",
@@ -181,25 +171,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		for (String name : drumNames) {
 			createDrum(name, name);
 		}
-	}
-
-	private Spatial createStick(String name, Hand handDirection) {
-		Spatial spatial = rootNode.getChild(name);
-		spatial.setUserData(StickData.CLEAR.getKey(), true);
-		spatial.setUserData(StickData.VELOCITY.getKey(), Vector3f.ZERO);
-		spatial.addControl(new KinectHandControl(kinect, handDirection));
-		return spatial;
-	}
-
-	private GhostControl addStickCollision(Spatial stick) {
-		CollisionShape collisionShape = CollisionShapeFactory.createBoxShape(stick);
-		GhostControl ghostControl = new GhostControl(collisionShape);
-		ghostControl.setCollisionGroup(CollisionGroups.STICKS.getCollisionGroup());
-		ghostControl.setCollideWithGroups(CollisionGroups.DRUMS.getCollisionGroup());
-		bulletAppState.getPhysicsSpace().add(ghostControl);
-		stick.addControl(ghostControl);
-		stick.setUserData(StickData.COLLIDED.getKey(), new ArrayList<PhysicsCollisionObject>());
-		return ghostControl;
 	}
 
 	private void createDrum(String drumName, String audioName) {
@@ -250,8 +221,8 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 	@Override
 	public void physicsTick(PhysicsSpace physicsSpace, float v) {
-		removeStickClearedCollisions(rightStick, rightStickGhost);
-		removeStickClearedCollisions(leftStick, leftStickGhost);
+		removeStickClearedCollisions(sticksAppState.getRightStick(), sticksAppState.getRightStickGhost());
+		removeStickClearedCollisions(sticksAppState.getLeftStick(), sticksAppState.getLeftStickGhost());
 
 		// Play the bass drum
 		if (kinect.isInitialPose()) {
@@ -328,5 +299,9 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 	@Override
 	public void kinectCouldNotLoad() {
 		System.out.println("Kinect could not load");
+	}
+
+	public BulletAppState getBulletAppState() {
+		return bulletAppState;
 	}
 }
