@@ -41,8 +41,8 @@ import java.util.logging.Logger;
 
 public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
 	private final BulletAppState bulletAppState;
-	private final SticksAppState sticksAppState;
-	private final HandControllerAppState handControllerAppState;
+	private SticksAppState sticksAppState;
+	private HandControllerAppState handControllerAppState;
 
 	private final Kinect kinect;
 	private Wiimote leftWiimote;
