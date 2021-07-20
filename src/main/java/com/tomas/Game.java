@@ -40,15 +40,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
-	private BulletAppState bulletAppState;
-	private SticksAppState sticksAppState;
-	private HandControllerAppState handControllerAppState;
+	private final BulletAppState bulletAppState;
+	private final SticksAppState sticksAppState;
+	private final HandControllerAppState handControllerAppState;
 
-	private Kinect kinect;
+	private final Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
 
-	private Velocity bassPedalVelocity = new Velocity();
+	private final Velocity bassPedalVelocity = new Velocity();
 	private boolean isBassPedalEnabled = false;
 	private boolean canHitBass = false;
 
@@ -70,7 +70,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 
 		stateManager.attach(bulletAppState);
 		bulletAppState.getPhysicsSpace().addCollisionListener(this);
-//		bulletAppState.getPhysicsSpace().addTickListener(this);
 
 		assetManager.registerLocator("assets/", FileLocator.class);
 		BinaryImporter importer = BinaryImporter.getInstance();
@@ -219,9 +218,5 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 				}
 			}
 		}
-	}
-
-	public BulletAppState getBulletAppState() {
-		return bulletAppState;
 	}
 }

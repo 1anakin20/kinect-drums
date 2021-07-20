@@ -9,18 +9,13 @@ import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
 
 public class KinectHandControl extends AbstractControl {
-	private Kinect kinect;
-	private Hand handDirection;
-	private long previousTime;
-	private Vector3f previousHandLocation;
-	private Vector3f handVelocity;
-	private Velocity velocity;
+	private final Kinect kinect;
+	private final Hand handDirection;
+	private final Velocity velocity;
 
 	public KinectHandControl(Kinect kinect, Hand handDirection) {
 		this.kinect = kinect;
 		this.handDirection = handDirection;
-		previousTime = 0;
-		previousHandLocation = new Vector3f();
 		velocity = new Velocity();
 	}
 

@@ -20,9 +20,7 @@ public class Joint {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("Joint{");
-		sb.append("translation=").append(translation);
-		sb.append('}');
-		return sb.toString();
+		return "Joint{" + "translation=" + translation +
+				'}';
 	}
 }

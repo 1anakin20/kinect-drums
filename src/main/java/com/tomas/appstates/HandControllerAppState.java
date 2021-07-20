@@ -20,7 +20,7 @@ import java.util.List;
 
 public class HandControllerAppState extends BaseAppState implements PhysicsCollisionListener, PhysicsTickListener {
 	private AssetManager assetManager;
-	private SticksAppState sticksAppState;
+	private final SticksAppState sticksAppState;
 
 	public HandControllerAppState(SticksAppState sticksAppState) {
 		this.sticksAppState = sticksAppState;

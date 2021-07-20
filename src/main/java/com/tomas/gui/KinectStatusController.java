@@ -13,12 +13,10 @@ import javax.annotation.Nonnull;
 
 public class KinectStatusController implements ScreenController, KinectEvents {
 	private Nifty nifty;
-	private Screen screen;
 
 	@Override
 	public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
 		this.nifty = nifty;
-		this.screen = screen;
 	}
 
 	@Override
