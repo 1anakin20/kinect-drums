@@ -44,7 +44,9 @@ public class SticksAppState extends BaseAppState {
 		// Create stick mesh
 		Spatial stick = assetManager.loadModel("Models/stick.j3o");
 		rightStick = createStick(stick.deepClone(), Hand.RIGHT_HAND);
+		rightStick.setName("right_stick");
 		leftStick = createStick(stick.deepClone(), Hand.LEFT_HAND);
+		leftStick.setName("left_stick");
 
 		rightStickGhost = addStickCollision(rightStick);
 		leftStickGhost = addStickCollision(leftStick);
