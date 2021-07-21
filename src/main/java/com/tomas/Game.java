@@ -8,10 +8,6 @@ import com.jme3.app.state.ConstantVerifierState;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.PhysicsTickListener;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
-import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.GhostControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -22,15 +18,13 @@ import com.jme3.niftygui.NiftyJmeDisplay;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.sun.tools.javac.Main;
-import com.tomas.appstates.HandControllerAppState;
+import com.tomas.appstates.KinectBassDrumPedalAppState;
+import com.tomas.appstates.KinectHandControllerAppState;
 import com.tomas.appstates.SticksAppState;
 import com.tomas.gui.KinectStatusController;
-import com.tomas.kinect.Joint;
 import com.tomas.kinect.Kinect;
-import com.tomas.kinect.control.Velocity;
 import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.DrumData;
-import com.tomas.utils.SoundManager;
 import de.lessvoid.nifty.Nifty;
 import wiiusej.Wiimote;
 
@@ -39,18 +33,17 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Game extends SimpleApplication implements PhysicsCollisionListener, PhysicsTickListener {
+public class Game extends SimpleApplication {
 	private final BulletAppState bulletAppState;
 	private SticksAppState sticksAppState;
-	private HandControllerAppState handControllerAppState;
+	private KinectHandControllerAppState kinectHandControllerAppState;
+	private KinectBassDrumPedalAppState kinectBassDrumPedalAppState;
 
 	private final Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
 
-	private final Velocity bassPedalVelocity = new Velocity();
-	private boolean isBassPedalEnabled = false;
-	private boolean canHitBass = false;
+
 
 	Game() {
 		super(new StatsAppState(),
@@ -69,7 +62,6 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		bulletAppState.setDebugEnabled(true);
 
 		stateManager.attach(bulletAppState);
-		bulletAppState.getPhysicsSpace().addCollisionListener(this);
 
 		assetManager.registerLocator("assets/", FileLocator.class);
 		BinaryImporter importer = BinaryImporter.getInstance();
@@ -141,10 +133,14 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		sticksAppState = new SticksAppState();
 		stateManager.attach(sticksAppState);
 
-		handControllerAppState = new HandControllerAppState(sticksAppState);
-		stateManager.attach(handControllerAppState);
-		bulletAppState.getPhysicsSpace().addCollisionListener(handControllerAppState);
-		bulletAppState.getPhysicsSpace().addTickListener(handControllerAppState);
+		kinectHandControllerAppState = new KinectHandControllerAppState(sticksAppState);
+		stateManager.attach(kinectHandControllerAppState);
+		bulletAppState.getPhysicsSpace().addCollisionListener(kinectHandControllerAppState);
+		bulletAppState.getPhysicsSpace().addTickListener(kinectHandControllerAppState);
+
+		kinectBassDrumPedalAppState = new KinectBassDrumPedalAppState();
+		stateManager.attach(kinectBassDrumPedalAppState);
+		bulletAppState.getPhysicsSpace().addTickListener(kinectBassDrumPedalAppState);
 
 		setGameObjects();
 	}
@@ -180,43 +176,5 @@ public class Game extends SimpleApplication implements PhysicsCollisionListener,
 		ghostControl.setCollisionGroup(CollisionGroups.DRUMS.getCollisionGroup());
 		spatial.addControl(ghostControl);
 		bulletAppState.getPhysicsSpace().add(ghostControl);
-	}
-
-	@Override
-	public void collision(PhysicsCollisionEvent physicsCollisionEvent) {
-
-	}
-
-	@Override
-	public void prePhysicsTick(PhysicsSpace physicsSpace, float v) {
-	}
-
-	@Override
-	public void physicsTick(PhysicsSpace physicsSpace, float v) {
-
-
-		// Play the bass drum
-		if (kinect.isInitialPose()) {
-			Joint rightKneeJoint = kinect.getRightKnee();
-			if (rightKneeJoint != null) {
-				Vector3f rightKneeTranslation = rightKneeJoint.getTranslation();
-				if (rightKneeTranslation.getY() > kinect.getInitialRightKnee().getTranslation().getY() + 0.05) {
-					isBassPedalEnabled = true;
-					System.out.println("rightKneeTranslation = " + rightKneeTranslation);
-				} else {
-					if (isBassPedalEnabled) {
-						isBassPedalEnabled = false;
-						canHitBass = true;
-					}
-				}
-
-				Vector3f bassPedalVelocityVector = bassPedalVelocity.calculateVelocity(rightKneeTranslation);
-				if (bassPedalVelocityVector.getY() < 0 && canHitBass) {
-					canHitBass = false;
-					float bassIntensity = SoundManager.calculateHitForce(bassPedalVelocityVector);
-					SoundManager.playDrum("bass_drum", bassIntensity, assetManager);
-				}
-			}
-		}
 	}
 }
