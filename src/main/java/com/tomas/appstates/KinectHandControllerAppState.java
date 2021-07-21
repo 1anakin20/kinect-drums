@@ -18,11 +18,11 @@ import com.tomas.utils.SoundManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HandControllerAppState extends BaseAppState implements PhysicsCollisionListener, PhysicsTickListener {
+public class KinectHandControllerAppState extends BaseAppState implements PhysicsCollisionListener, PhysicsTickListener {
 	private AssetManager assetManager;
 	private final SticksAppState sticksAppState;
 
-	public HandControllerAppState(SticksAppState sticksAppState) {
+	public KinectHandControllerAppState(SticksAppState sticksAppState) {
 		this.sticksAppState = sticksAppState;
 	}
 
