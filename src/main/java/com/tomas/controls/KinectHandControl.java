@@ -18,12 +18,10 @@ public class KinectHandControl extends AbstractControl {
 	private final Velocity velocity;
 
 	/**
-	 * @param kinect Deprecated; will be removed
 	 * @param handDirection Left or right hand who will be used. See {@link Hand}
 	 */
-	// TODO kinect is now a singleton, don't pass the parameter kinect
-	public KinectHandControl(Kinect kinect, Hand handDirection) {
-		this.kinect = kinect;
+	public KinectHandControl(Hand handDirection) {
+		this.kinect = Kinect.getInstance();
 		this.handDirection = handDirection;
 		velocity = new Velocity();
 	}

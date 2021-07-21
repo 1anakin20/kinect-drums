@@ -15,7 +15,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.tomas.controls.KinectHandControl;
-import com.tomas.kinect.Kinect;
 import com.tomas.properties.CollisionGroups;
 import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
@@ -73,7 +72,7 @@ public class SticksAppState extends BaseAppState {
 	private Spatial createStick(Spatial stick, Hand handDirection) {
 		stick.setUserData(StickData.CLEAR.getKey(), true);
 		stick.setUserData(StickData.VELOCITY.getKey(), Vector3f.ZERO);
-		stick.addControl(new KinectHandControl(Kinect.getInstance(), handDirection));
+		stick.addControl(new KinectHandControl(handDirection));
 		rootNode.attachChild(stick);
 		LightList lights = rootNode.getWorldLightList();
 		for (Light light : lights) {
