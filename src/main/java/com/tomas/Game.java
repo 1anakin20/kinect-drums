@@ -8,42 +8,27 @@ import com.jme3.app.state.ConstantVerifierState;
 import com.jme3.asset.plugins.FileLocator;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.control.GhostControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.export.binary.BinaryImporter;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.sun.tools.javac.Main;
+import com.tomas.appstates.DrumPlayingAppState;
 import com.tomas.appstates.KinectBassDrumPedalAppState;
 import com.tomas.appstates.KinectHandControllerAppState;
 import com.tomas.appstates.SticksAppState;
 import com.tomas.gui.KinectStatusController;
 import com.tomas.kinect.Kinect;
-import com.tomas.properties.CollisionGroups;
-import com.tomas.properties.DrumData;
 import de.lessvoid.nifty.Nifty;
 import wiiusej.Wiimote;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class Game extends SimpleApplication {
-	private final BulletAppState bulletAppState;
+	private BulletAppState bulletAppState;
 	private SticksAppState sticksAppState;
 	private KinectHandControllerAppState kinectHandControllerAppState;
 	private KinectBassDrumPedalAppState kinectBassDrumPedalAppState;
 
-	private final Kinect kinect;
+	private Kinect kinect;
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
-
-
 
 	Game() {
 		super(new StatsAppState(),
@@ -53,27 +38,19 @@ public class Game extends SimpleApplication {
 				// TODO Change fly cam to static non-movable camera
 				new FlyCamAppState());
 
-		kinect = Kinect.getInstance();
-		bulletAppState = new BulletAppState();
+
 	}
 
 	public void simpleInitApp() {
+		assetManager.registerLocator("assets/", FileLocator.class);
+
+		kinect = Kinect.getInstance();
+		bulletAppState = new BulletAppState();
+
 		// Debug options
 		bulletAppState.setDebugEnabled(true);
 
 		stateManager.attach(bulletAppState);
-
-		assetManager.registerLocator("assets/", FileLocator.class);
-		BinaryImporter importer = BinaryImporter.getInstance();
-		importer.setAssetManager(assetManager);
-		File file = new File("assets/Scenes/drums.j3o");
-		try {
-			Node loadedNode = (Node) importer.load(file);
-			loadedNode.setName("drum");
-			rootNode.attachChild(loadedNode);
-		} catch (IOException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "No saved node loaded.", ex);
-		}
 
 		cam.setLocation(new Vector3f(0, 1.5f, -1));
 		cam.setRotation(new Quaternion());
@@ -130,6 +107,9 @@ public class Game extends SimpleApplication {
 //
 //		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
 //		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
+		DrumPlayingAppState drumPlayingAppState = new DrumPlayingAppState();
+		stateManager.attach(drumPlayingAppState);
+
 		sticksAppState = new SticksAppState();
 		stateManager.attach(sticksAppState);
 
@@ -141,40 +121,10 @@ public class Game extends SimpleApplication {
 		kinectBassDrumPedalAppState = new KinectBassDrumPedalAppState();
 		stateManager.attach(kinectBassDrumPedalAppState);
 		bulletAppState.getPhysicsSpace().addTickListener(kinectBassDrumPedalAppState);
-
-		setGameObjects();
 	}
 
 	@Override
 	public void simpleUpdate(float tpf) {
 
-	}
-
-	private void setGameObjects() {
-		// Drum
-		String[] drumNames = new String[] {
-				"floor_tom",
-				"ride_cymbal",
-				"mid_tom",
-				"high_tom",
-				"crash_cymbal",
-				"hi_hat",
-				"snare_drum"
-		};
-		for (String name : drumNames) {
-			createDrum(name, name);
-		}
-	}
-
-	private void createDrum(String drumName, String audioName) {
-		Spatial spatial = rootNode.getChild(drumName);
-		spatial.setUserData(DrumData.AUDIO_NAME.getKey(), audioName);
-
-		CollisionShape collisionShape = CollisionShapeFactory.createDynamicMeshShape(spatial);
-		collisionShape.setMargin(0);
-		GhostControl ghostControl = new GhostControl(collisionShape);
-		ghostControl.setCollisionGroup(CollisionGroups.DRUMS.getCollisionGroup());
-		spatial.addControl(ghostControl);
-		bulletAppState.getPhysicsSpace().add(ghostControl);
 	}
 }
