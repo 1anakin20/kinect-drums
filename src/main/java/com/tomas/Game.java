@@ -71,42 +71,9 @@ public class Game extends SimpleApplication {
 		nifty.gotoScreen("start");
 
 		// Kinect setup
-		// TODO load it in a background thread and notify when it's loaded. If it fails show error
-		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, false);
 		kinect.registerListener(kinectStatusController);
+		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, false);
 
-		// Wiimote setup
-//		WiiUseApiManager wiiUseApiManager;
-//		try {
-//			wiiUseApiManager = new WiiUseApiManager();
-//		} catch (WiiusejNativeLibraryLoadingException e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//			return;
-//		}
-
-		// 2 wiimotes need to be used
-		// TODO Allow to start the app without the 2 wiimotes
-//		Wiimote[] wiimotes = wiiUseApiManager.getWiimotes(2);
-//		leftWiimote = wiimotes[0];
-//		rightWiimote = wiimotes[1];
-//
-//		leftWiimote.setLeds(true, false, false, false);
-//		rightWiimote.setLeds(false, true, false, false);
-//
-//		leftWiimote.activateMotionSensing();
-//		leftWiimote.activateSmoothing();
-//		leftWiimote.setAlphaSmoothingValue(0.8f);
-//		leftWiimote.activateContinuous();
-//		rightWiimote.activateMotionSensing();
-//		rightWiimote.activateSmoothing();
-//		rightWiimote.activateContinuous();
-//
-//		WiimoteMotion leftWiimoteMotion = new WiimoteMotion();
-//		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
-//
-//		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
-//		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
 		DrumPlayingAppState drumPlayingAppState = new DrumPlayingAppState();
 		stateManager.attach(drumPlayingAppState);
 
