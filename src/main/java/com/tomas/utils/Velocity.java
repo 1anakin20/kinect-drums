@@ -1,4 +1,4 @@
-package com.tomas.kinect.control;
+package com.tomas.utils;
 
 import com.jme3.math.Vector3f;
 

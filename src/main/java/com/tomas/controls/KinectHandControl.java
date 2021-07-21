@@ -1,4 +1,4 @@
-package com.tomas.kinect.control;
+package com.tomas.controls;
 
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -7,6 +7,7 @@ import com.jme3.scene.control.AbstractControl;
 import com.tomas.kinect.Kinect;
 import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
+import com.tomas.utils.Velocity;
 
 public class KinectHandControl extends AbstractControl {
 	private final Kinect kinect;

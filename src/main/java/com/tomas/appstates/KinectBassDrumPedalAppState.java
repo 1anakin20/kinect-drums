@@ -8,8 +8,8 @@ import com.jme3.bullet.PhysicsTickListener;
 import com.jme3.math.Vector3f;
 import com.tomas.kinect.Joint;
 import com.tomas.kinect.Kinect;
-import com.tomas.kinect.control.Velocity;
 import com.tomas.utils.SoundManager;
+import com.tomas.utils.Velocity;
 
 public class KinectBassDrumPedalAppState extends BaseAppState implements PhysicsTickListener {
 	private AssetManager assetManager;
