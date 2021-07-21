@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Singleton to access te Kinect
+ */
 public class Kinect extends J4KSDK {
 	private static Kinect instance = null;
 	private Joint leftHand, rightHand, rightKnee;

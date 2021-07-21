@@ -1,5 +1,8 @@
 package com.tomas.properties;
 
+/**
+ * Stick spatial user data keys
+ */
 public enum StickData {
 	CLEAR("clear"),
 	VELOCITY("velocity"),

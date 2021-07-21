@@ -18,6 +18,9 @@ import com.tomas.utils.SoundManager;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Registers the hits to the drum by stroking down the arms
+ */
 public class KinectHandControllerAppState extends BaseAppState implements PhysicsCollisionListener, PhysicsTickListener {
 	private AssetManager assetManager;
 	private final SticksAppState sticksAppState;

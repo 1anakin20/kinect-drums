@@ -20,6 +20,9 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * 3D drum to play
+ */
 public class DrumPlayingAppState extends BaseAppState {
 	private AssetManager assetManager;
 	private BulletAppState bulletAppState;

@@ -37,8 +37,6 @@ public class Game extends SimpleApplication {
 				new ConstantVerifierState(),
 				// TODO Change fly cam to static non-movable camera
 				new FlyCamAppState());
-
-
 	}
 
 	public void simpleInitApp() {
@@ -46,9 +44,6 @@ public class Game extends SimpleApplication {
 
 		kinect = Kinect.getInstance();
 		bulletAppState = new BulletAppState();
-
-		// Debug options
-		bulletAppState.setDebugEnabled(true);
 
 		stateManager.attach(bulletAppState);
 
@@ -67,13 +62,13 @@ public class Game extends SimpleApplication {
 		getGuiViewPort().addProcessor(niftyDisplay);
 		KinectStatusController kinectStatusController = new KinectStatusController();
 		nifty.fromXml("Interface/GUI/kinectStatusGUI.xml", "start", kinectStatusController);
-//		nifty.setDebugOptionPanelColors(true);
 		nifty.gotoScreen("start");
 
 		// Kinect setup
 		kinect.registerListener(kinectStatusController);
 		kinect.loadKinect(true, Kinect.NUI_IMAGE_RESOLUTION_640x480, Kinect.NUI_IMAGE_RESOLUTION_640x480, false);
 
+		// States setup
 		DrumPlayingAppState drumPlayingAppState = new DrumPlayingAppState();
 		stateManager.attach(drumPlayingAppState);
 
@@ -92,6 +87,5 @@ public class Game extends SimpleApplication {
 
 	@Override
 	public void simpleUpdate(float tpf) {
-
 	}
 }

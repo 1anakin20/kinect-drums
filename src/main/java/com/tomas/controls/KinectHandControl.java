@@ -9,11 +9,19 @@ import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
 import com.tomas.utils.Velocity;
 
+/**
+ * Control by moving the arms using the Kinect
+ */
 public class KinectHandControl extends AbstractControl {
 	private final Kinect kinect;
 	private final Hand handDirection;
 	private final Velocity velocity;
 
+	/**
+	 * @param kinect Deprecated; will be removed
+	 * @param handDirection Left or right hand who will be used. See {@link Hand}
+	 */
+	// TODO kinect is now a singleton, don't pass the parameter kinect
 	public KinectHandControl(Kinect kinect, Hand handDirection) {
 		this.kinect = kinect;
 		this.handDirection = handDirection;

@@ -5,6 +5,9 @@ import com.jme3.audio.AudioData;
 import com.jme3.audio.AudioNode;
 import com.jme3.math.Vector3f;
 
+/**
+ * Methods to play a hit sound
+ */
 public class SoundManager {
 
 	/**Calculates the volume of a hit from the velocity of the object

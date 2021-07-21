@@ -11,6 +11,9 @@ import com.tomas.kinect.Kinect;
 import com.tomas.utils.SoundManager;
 import com.tomas.utils.Velocity;
 
+/**
+ * Bass pedal actioned by the right knee
+ */
 public class KinectBassDrumPedalAppState extends BaseAppState implements PhysicsTickListener {
 	private AssetManager assetManager;
 	private final Kinect kinect = Kinect.getInstance();

@@ -22,6 +22,9 @@ import com.tomas.properties.StickData;
 
 import java.util.ArrayList;
 
+/**
+ * Sticks moved by moving the arms
+ */
 public class SticksAppState extends BaseAppState {
 	private Node rootNode;
 	private AssetManager assetManager;
