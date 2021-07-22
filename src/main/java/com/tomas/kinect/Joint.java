@@ -3,6 +3,9 @@ package com.tomas.kinect;
 import com.jme3.math.Vector3f;
 import edu.ufl.digitalworlds.j4k.Skeleton;
 
+/**
+ * Represents a Kinect body point
+ */
 public class Joint {
 	private final Vector3f translation;
 
@@ -20,9 +23,7 @@ public class Joint {
 
 	@Override
 	public String toString() {
-		final StringBuilder sb = new StringBuilder("Joint{");
-		sb.append("translation=").append(translation);
-		sb.append('}');
-		return sb.toString();
+		return "Joint{" + "translation=" + translation +
+				'}';
 	}
 }

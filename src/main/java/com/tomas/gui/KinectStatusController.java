@@ -11,14 +11,15 @@ import de.lessvoid.nifty.tools.Color;
 
 import javax.annotation.Nonnull;
 
+/**
+ * Shows the state of the Kinect
+ */
 public class KinectStatusController implements ScreenController, KinectEvents {
 	private Nifty nifty;
-	private Screen screen;
 
 	@Override
 	public void bind(@Nonnull Nifty nifty, @Nonnull Screen screen) {
 		this.nifty = nifty;
-		this.screen = screen;
 	}
 
 	@Override

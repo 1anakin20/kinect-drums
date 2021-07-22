@@ -1,4 +1,4 @@
-package com.tomas.kinect.control;
+package com.tomas.controls;
 
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -7,20 +7,22 @@ import com.jme3.scene.control.AbstractControl;
 import com.tomas.kinect.Kinect;
 import com.tomas.properties.Hand;
 import com.tomas.properties.StickData;
+import com.tomas.utils.Velocity;
 
+/**
+ * Control by moving the arms using the Kinect
+ */
 public class KinectHandControl extends AbstractControl {
-	private Kinect kinect;
-	private Hand handDirection;
-	private long previousTime;
-	private Vector3f previousHandLocation;
-	private Vector3f handVelocity;
-	private Velocity velocity;
+	private final Kinect kinect;
+	private final Hand handDirection;
+	private final Velocity velocity;
 
-	public KinectHandControl(Kinect kinect, Hand handDirection) {
-		this.kinect = kinect;
+	/**
+	 * @param handDirection Left or right hand who will be used. See {@link Hand}
+	 */
+	public KinectHandControl(Hand handDirection) {
+		this.kinect = Kinect.getInstance();
 		this.handDirection = handDirection;
-		previousTime = 0;
-		previousHandLocation = new Vector3f();
 		velocity = new Velocity();
 	}
 
