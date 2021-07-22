@@ -44,6 +44,7 @@ public class Game extends SimpleApplication {
 
 		stateManager.attach(bulletAppState);
 
+		cam.setFrustumPerspective(45f, (float) cam.getWidth() / cam.getHeight(), 0.01f, 1000f);
 		cam.setLocation(new Vector3f(0, 1.5f, -1));
 		cam.setRotation(new Quaternion());
 
