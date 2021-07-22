@@ -7,64 +7,52 @@ import wiiusej.wiiusejevents.physicalevents.WiimoteButtonsEvent;
 import wiiusej.wiiusejevents.utils.WiimoteListener;
 import wiiusej.wiiusejevents.wiiuseapievents.*;
 
-public class WiimoteEventsAdapter implements WiimoteListener {
+public interface WiimoteEventsAdapter extends WiimoteListener {
 	@Override
-	public void onButtonsEvent(WiimoteButtonsEvent wiimoteButtonsEvent) {
-
+	default void onButtonsEvent(WiimoteButtonsEvent wiimoteButtonsEvent) {
 	}
 
 	@Override
-	public void onIrEvent(IREvent irEvent) {
-
+	default void onIrEvent(IREvent irEvent) {
 	}
 
 	@Override
-	public void onMotionSensingEvent(MotionSensingEvent motionSensingEvent) {
-
+	default void onMotionSensingEvent(MotionSensingEvent motionSensingEvent) {
 	}
 
 	@Override
-	public void onExpansionEvent(ExpansionEvent expansionEvent) {
-
+	default void onExpansionEvent(ExpansionEvent expansionEvent) {
 	}
 
 	@Override
-	public void onStatusEvent(StatusEvent statusEvent) {
-
+	default void onStatusEvent(StatusEvent statusEvent) {
 	}
 
 	@Override
-	public void onDisconnectionEvent(DisconnectionEvent disconnectionEvent) {
-
+	default void onDisconnectionEvent(DisconnectionEvent disconnectionEvent) {
 	}
 
 	@Override
-	public void onNunchukInsertedEvent(NunchukInsertedEvent nunchukInsertedEvent) {
-
+	default void onNunchukInsertedEvent(NunchukInsertedEvent nunchukInsertedEvent) {
 	}
 
 	@Override
-	public void onNunchukRemovedEvent(NunchukRemovedEvent nunchukRemovedEvent) {
-
+	default void onNunchukRemovedEvent(NunchukRemovedEvent nunchukRemovedEvent) {
 	}
 
 	@Override
-	public void onGuitarHeroInsertedEvent(GuitarHeroInsertedEvent guitarHeroInsertedEvent) {
-
+	default void onGuitarHeroInsertedEvent(GuitarHeroInsertedEvent guitarHeroInsertedEvent) {
 	}
 
 	@Override
-	public void onGuitarHeroRemovedEvent(GuitarHeroRemovedEvent guitarHeroRemovedEvent) {
-
+	default void onGuitarHeroRemovedEvent(GuitarHeroRemovedEvent guitarHeroRemovedEvent) {
 	}
 
 	@Override
-	public void onClassicControllerInsertedEvent(ClassicControllerInsertedEvent classicControllerInsertedEvent) {
-
+	default void onClassicControllerInsertedEvent(ClassicControllerInsertedEvent classicControllerInsertedEvent) {
 	}
 
 	@Override
-	public void onClassicControllerRemovedEvent(ClassicControllerRemovedEvent classicControllerRemovedEvent) {
-
+	default void onClassicControllerRemovedEvent(ClassicControllerRemovedEvent classicControllerRemovedEvent) {
 	}
 }

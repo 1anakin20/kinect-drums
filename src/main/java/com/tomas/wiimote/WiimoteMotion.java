@@ -2,7 +2,7 @@ package com.tomas.wiimote;
 
 import wiiusej.wiiusejevents.physicalevents.MotionSensingEvent;
 
-public class WiimoteMotion extends WiimoteEventsAdapter {
+public class WiimoteMotion implements WiimoteEventsAdapter {
 	private float zForce;
 
 	@Override

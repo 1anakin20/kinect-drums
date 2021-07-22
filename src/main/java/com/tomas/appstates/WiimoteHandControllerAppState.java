@@ -2,16 +2,18 @@ package com.tomas.appstates;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import com.tomas.wiimote.WiimoteEventsAdapter;
 import com.tomas.wiimote.WiimoteLifeCycleEvents;
 import com.tomas.wiimote.WiimoteManager;
 import com.tomas.wiimote.WiimoteMotion;
 import wiiusej.Wiimote;
+import wiiusej.wiiusejevents.physicalevents.MotionSensingEvent;
 
 /**
  * Register the hits to the drum by stroking down the wiimote
  */
 // TODO Register the hits with the wiimote accelerometer
-public class WiimoteHandControllerAppState extends BaseAppState implements WiimoteLifeCycleEvents {
+public class WiimoteHandControllerAppState extends BaseAppState implements WiimoteLifeCycleEvents, WiimoteEventsAdapter {
 	private Wiimote leftWiimote;
 	private Wiimote rightWiimote;
 
@@ -34,6 +36,11 @@ public class WiimoteHandControllerAppState extends BaseAppState implements Wiimo
 
 	@Override
 	protected void onDisable() {
+
+	}
+
+	@Override
+	public void onMotionSensingEvent(MotionSensingEvent motionSensingEvent) {
 
 	}
 
