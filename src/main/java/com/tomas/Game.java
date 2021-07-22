@@ -18,7 +18,6 @@ import com.tomas.appstates.SticksAppState;
 import com.tomas.gui.KinectStatusController;
 import com.tomas.kinect.Kinect;
 import de.lessvoid.nifty.Nifty;
-import wiiusej.Wiimote;
 
 public class Game extends SimpleApplication {
 	private BulletAppState bulletAppState;
@@ -27,8 +26,6 @@ public class Game extends SimpleApplication {
 	private KinectBassDrumPedalAppState kinectBassDrumPedalAppState;
 
 	private Kinect kinect;
-	private Wiimote leftWiimote;
-	private Wiimote rightWiimote;
 
 	Game() {
 		super(new StatsAppState(),

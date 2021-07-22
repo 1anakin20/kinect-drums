@@ -2,12 +2,16 @@ package com.tomas.appstates;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import wiiusej.Wiimote;
 
 /**
  * Register the hits to the drum by stroking down the wiimote
  */
 // TODO Register the hits with the wiimote accelerometer
 public class WiimoteHandControllerAppState extends BaseAppState {
+	private Wiimote leftWiimote;
+	private Wiimote rightWiimote;
+
 	@Override
 	protected void initialize(Application app) {
 		// Wiimote setup
