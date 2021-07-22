@@ -11,10 +11,7 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.niftygui.NiftyJmeDisplay;
-import com.tomas.appstates.DrumPlayingAppState;
-import com.tomas.appstates.KinectBassDrumPedalAppState;
-import com.tomas.appstates.KinectHandControllerAppState;
-import com.tomas.appstates.SticksAppState;
+import com.tomas.appstates.*;
 import com.tomas.gui.KinectStatusController;
 import com.tomas.kinect.Kinect;
 import de.lessvoid.nifty.Nifty;
@@ -73,10 +70,12 @@ public class Game extends SimpleApplication {
 		sticksAppState = new SticksAppState();
 		stateManager.attach(sticksAppState);
 
-		kinectHandControllerAppState = new KinectHandControllerAppState(sticksAppState);
-		stateManager.attach(kinectHandControllerAppState);
-		bulletAppState.getPhysicsSpace().addCollisionListener(kinectHandControllerAppState);
-		bulletAppState.getPhysicsSpace().addTickListener(kinectHandControllerAppState);
+//		kinectHandControllerAppState = new KinectHandControllerAppState(sticksAppState);
+//		stateManager.attach(kinectHandControllerAppState);
+//		bulletAppState.getPhysicsSpace().addCollisionListener(kinectHandControllerAppState);
+//		bulletAppState.getPhysicsSpace().addTickListener(kinectHandControllerAppState);
+		WiimoteHandControllerAppState wiimoteHandControllerAppState = new WiimoteHandControllerAppState();
+		stateManager.attach(wiimoteHandControllerAppState);
 
 		kinectBassDrumPedalAppState = new KinectBassDrumPedalAppState();
 		stateManager.attach(kinectBassDrumPedalAppState);
