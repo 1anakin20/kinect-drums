@@ -74,7 +74,7 @@ public class Game extends SimpleApplication {
 //		stateManager.attach(kinectHandControllerAppState);
 //		bulletAppState.getPhysicsSpace().addCollisionListener(kinectHandControllerAppState);
 //		bulletAppState.getPhysicsSpace().addTickListener(kinectHandControllerAppState);
-		WiimoteHandControllerAppState wiimoteHandControllerAppState = new WiimoteHandControllerAppState();
+		WiimoteHandControllerAppState wiimoteHandControllerAppState = new WiimoteHandControllerAppState(sticksAppState);
 		stateManager.attach(wiimoteHandControllerAppState);
 
 		kinectBassDrumPedalAppState = new KinectBassDrumPedalAppState();
