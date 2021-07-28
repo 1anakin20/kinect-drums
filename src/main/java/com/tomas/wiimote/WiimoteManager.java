@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class WiimoteManager implements WiimoteEventsAdapter {
+public class WiimoteManager extends WiimoteEventsAdapter {
 	private final List<WiimoteLifeCycleEvents> listeners = new ArrayList<>();
 	private WiiUseApiManager wiiUseApiManager;
 

@@ -8,7 +8,7 @@ import com.tomas.properties.DrumData;
 import com.tomas.utils.SoundManager;
 import wiiusej.wiiusejevents.physicalevents.MotionSensingEvent;
 
-public class WiimoteMotion implements WiimoteEventsAdapter {
+public class WiimoteMotion extends WiimoteEventsAdapter {
 	private Application app;
 	private GhostControl stick;
 	private AssetManager assetManager;
