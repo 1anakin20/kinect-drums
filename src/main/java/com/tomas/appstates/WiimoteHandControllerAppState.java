@@ -11,7 +11,6 @@ import wiiusej.Wiimote;
 /**
  * Register the hits to the drum by stroking down the wiimote
  */
-// TODO Register the hits with the wiimote accelerometer
 public class WiimoteHandControllerAppState extends BaseAppState implements WiimoteLifeCycleEvents {
 	private AssetManager assetManager;
 	private Application app;
