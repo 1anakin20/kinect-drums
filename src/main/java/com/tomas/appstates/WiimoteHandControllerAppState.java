@@ -51,7 +51,9 @@ public class WiimoteHandControllerAppState extends BaseAppState implements Wiimo
 		rightWiimote = wiimotes[0];
 		leftWiimote = wiimotes[1];
 
+		// Left hand will be wiimote #1
 		leftWiimote.setLeds(true, false, false, false);
+		// Right hand will be wiimote #2
 		rightWiimote.setLeds(false, true, false, false);
 
 		rightWiimote.activateMotionSensing();
