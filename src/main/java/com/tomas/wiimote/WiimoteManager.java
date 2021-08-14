@@ -48,6 +48,10 @@ public class WiimoteManager extends WiimoteEventsAdapter {
 		executorService.execute(lookForWiimotes);
 	}
 
+	public void shutdown() {
+		wiiUseApiManager.definitiveShutdown();
+	}
+
 	public void registerListener(WiimoteLifeCycleEvents listener) {
 		listeners.add(listener);
 	}

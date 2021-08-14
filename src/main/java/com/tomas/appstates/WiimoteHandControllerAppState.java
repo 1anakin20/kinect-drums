@@ -14,6 +14,7 @@ import wiiusej.Wiimote;
 public class WiimoteHandControllerAppState extends BaseAppState implements WiimoteLifeCycleEvents {
 	private AssetManager assetManager;
 	private Application app;
+	private WiimoteManager wiimoteManager;
 	private Wiimote rightWiimote;
 	private Wiimote leftWiimote;
 	private SticksAppState sticksAppState;
@@ -26,14 +27,14 @@ public class WiimoteHandControllerAppState extends BaseAppState implements Wiimo
 	protected void initialize(Application app) {
 		this.app = app;
 		assetManager = app.getAssetManager();
-		WiimoteManager wiimoteManager = new WiimoteManager();
+		wiimoteManager = new WiimoteManager();
 		wiimoteManager.registerListener(this);
 		wiimoteManager.startLookingForWiimotes(2);
 	}
 
 	@Override
 	protected void cleanup(Application app) {
-
+		wiimoteManager.shutdown();
 	}
 
 	@Override
