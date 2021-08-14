@@ -67,9 +67,4 @@ public class WiimoteHandControllerAppState extends BaseAppState implements Wiimo
 		WiimoteMotion leftWiimoteMotion = new WiimoteMotion(app, assetManager, sticksAppState.getLeftStickGhost());
 		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
 	}
-
-	@Override
-	public void disconnected() {
-
-	}
 }

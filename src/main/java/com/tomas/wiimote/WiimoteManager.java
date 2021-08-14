@@ -3,7 +3,6 @@ package com.tomas.wiimote;
 import com.github.awvalenti.wiiusej.WiiusejNativeLibraryLoadingException;
 import wiiusej.WiiUseApiManager;
 import wiiusej.Wiimote;
-import wiiusej.wiiusejevents.wiiuseapievents.DisconnectionEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,14 +59,6 @@ public class WiimoteManager extends WiimoteEventsAdapter {
 	public void connected(Wiimote[] wiimotes) {
 		for (WiimoteLifeCycleEvents listener : listeners) {
 			listener.connected(wiimotes);
-		}
-	}
-
-	// TODO do I need this? make sure it is a wiimote I care about disconnecting?
-	@Override
-	public void onDisconnectionEvent(DisconnectionEvent disconnectionEvent) {
-		for (WiimoteLifeCycleEvents listener : listeners) {
-			listener.disconnected();
 		}
 	}
 }
