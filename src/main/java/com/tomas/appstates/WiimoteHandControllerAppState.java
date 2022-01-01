@@ -62,10 +62,10 @@ public class WiimoteHandControllerAppState extends BaseAppState implements Wiimo
 		leftWiimote.activateMotionSensing();
 		leftWiimote.activateSmoothing();
 
-		WiimoteMotion rightWiimoteMotion = new WiimoteMotion(app, assetManager, sticksAppState.getRightStickGhost());
+		WiimoteMotion rightWiimoteMotion = new WiimoteMotion(rightWiimote, app, assetManager, sticksAppState.getRightStickGhost());
 		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
 
-		WiimoteMotion leftWiimoteMotion = new WiimoteMotion(app, assetManager, sticksAppState.getLeftStickGhost());
+		WiimoteMotion leftWiimoteMotion = new WiimoteMotion(leftWiimote, app, assetManager, sticksAppState.getLeftStickGhost());
 		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
 	}
 }
