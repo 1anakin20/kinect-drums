@@ -42,7 +42,8 @@ public class WiimoteMotion extends WiimoteEventsAdapter {
 				String drumName = collidedGhost.getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
 				Runnable playSound = () -> SoundManager.playDrum(drumName, volume, assetManager);
 				app.enqueue(playSound);
-				rumbleExecutorService.execute(() -> hitRumble(50));
+				// TODO set it by app preferences
+				if (true) rumbleExecutorService.execute(() -> hitRumble(50));
 			}
 
 			buffer = TRIGGER_BUFFER;
