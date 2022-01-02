@@ -3,17 +3,18 @@ package com.tomas.configuration;
 import java.util.Properties;
 
 public class Configuration {
-    private boolean wiimoteRumbleOn;
+    private final Properties properties;
 
     protected Configuration(Properties properties) {
-        wiimoteRumbleOn = Boolean.parseBoolean(properties.getProperty("wiimote.rumble"));
+        this.properties = properties;
     }
 
-    public boolean isWiimoteRumbleOn() {
-        return wiimoteRumbleOn;
+    public String getValue(ConfigurationKeys value) {
+        return properties.getProperty(value.getValue());
     }
 
-    public void setWiimoteRumbleOn(boolean wiimoteRumbleOn) {
-        this.wiimoteRumbleOn = wiimoteRumbleOn;
+    public void setValue(ConfigurationKeys key, String value) {
+        properties.setProperty(key.getValue(), value);
+        // TODO store properties on disk
     }
 }
