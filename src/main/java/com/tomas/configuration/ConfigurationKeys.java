@@ -1,5 +1,8 @@
 package com.tomas.configuration;
 
+/**
+ * Keys for the configurations
+ */
 public enum ConfigurationKeys {
     WIIMOTE_RUMBLE("wiimote.rumble");
 
