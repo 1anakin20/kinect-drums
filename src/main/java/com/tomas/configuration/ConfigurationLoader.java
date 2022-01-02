@@ -15,7 +15,12 @@ public class ConfigurationLoader {
     private static final String CONFIGURATION_PATH = CONFIGURATION_FOLDER + "/config.properties";
     private static final String DEFAULT_CONFIG_PATH = CONFIGURATION_FOLDER + "/default_config.properties";
 
-    public static Configuration loadConfiguration() throws IOException {
+    /**
+     * Gives the configuration of the app
+     * @return The same {@link Configuration} instance
+     * @throws ConfigurationLoadingException The configuration file couldn't be loaded
+     */
+    public static Configuration loadConfiguration() throws ConfigurationLoadingException {
         if (configurationInstance == null) {
             File configurationFile = new File(CONFIGURATION_PATH);
             if (!configurationFile.exists()) {
@@ -31,6 +36,10 @@ public class ConfigurationLoader {
         return configurationInstance;
     }
 
+    /**
+     * Copies the default config from resources/configuration/default_config.properties to configuration/
+     * @throws IOException The file could not be copied
+     */
     private static void copyDefaultConfigs() throws IOException {
         InputStream defaultConfigInputStream  = ConfigurationLoader.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_PATH);
         if (defaultConfigInputStream == null) {
