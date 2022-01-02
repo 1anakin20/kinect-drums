@@ -10,20 +10,25 @@ import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 
 public class ConfigurationLoader {
+    private static Configuration configurationInstance = null;
     private static final String CONFIGURATION_FOLDER = "configuration";
     private static final String CONFIGURATION_PATH = CONFIGURATION_FOLDER + "/config.properties";
     private static final String DEFAULT_CONFIG_PATH = CONFIGURATION_FOLDER + "/default_config.properties";
 
     public static Configuration loadConfiguration() throws IOException {
-        File configurationFile = new File(CONFIGURATION_PATH);
-        if (!configurationFile.exists()) {
-            copyDefaultConfigs();
+        if (configurationInstance == null) {
+            File configurationFile = new File(CONFIGURATION_PATH);
+            if (!configurationFile.exists()) {
+                copyDefaultConfigs();
+            }
+
+            FileReader configurationFileReader = new FileReader(configurationFile);
+            Properties properties = new Properties();
+            properties.load(configurationFileReader);
+            configurationInstance = new Configuration(properties);
         }
 
-        FileReader configurationFileReader = new FileReader(configurationFile);
-        Properties properties = new Properties();
-        properties.load(configurationFileReader);
-        return new Configuration(properties);
+        return configurationInstance;
     }
 
     private static void copyDefaultConfigs() throws IOException {
