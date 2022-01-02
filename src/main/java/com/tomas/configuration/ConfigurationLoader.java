@@ -55,7 +55,7 @@ public class ConfigurationLoader {
      * @throws IOException The file could not be copied
      */
     private static void copyDefaultConfigs() throws IOException {
-        InputStream defaultConfigInputStream = ConfigurationLoader.class.getClassLoader().getResourceAsStream(ConfigurationPaths.DEFAULT_CONFIG_PATH.getValue());
+        InputStream defaultConfigInputStream = ConfigurationLoader.class.getClassLoader().getResourceAsStream(ConfigurationPaths.DEFAULT_CONFIGURATION_PATH.getValue());
         if (defaultConfigInputStream == null) {
             System.err.println("Default configs don't exist");
             System.exit(1);
