@@ -12,6 +12,9 @@ public class ConfigurationLoader {
     private static final String CONFIGURATION_PATH = CONFIGURATION_FOLDER + "/config.properties";
     private static final String DEFAULT_CONFIG_PATH = CONFIGURATION_FOLDER + "/default_config.properties";
 
+    private ConfigurationLoader() {
+    }
+
     /**
      * Gives the configuration of the app
      * @return The same {@link Configuration} instance
