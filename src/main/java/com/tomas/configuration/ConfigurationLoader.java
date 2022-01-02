@@ -8,9 +8,6 @@ import java.util.Properties;
 
 public class ConfigurationLoader {
     private static Configuration configurationInstance = null;
-    private static final String CONFIGURATION_FOLDER = "configuration";
-    private static final String CONFIGURATION_PATH = CONFIGURATION_FOLDER + "/config.properties";
-    private static final String DEFAULT_CONFIG_PATH = CONFIGURATION_FOLDER + "/default_config.properties";
 
     private ConfigurationLoader() {
     }
@@ -22,7 +19,7 @@ public class ConfigurationLoader {
      */
     public static Configuration loadConfiguration() throws ConfigurationLoadingException {
         if (configurationInstance == null) {
-            File configurationFile = new File(CONFIGURATION_PATH);
+            File configurationFile = new File(ConfigurationPaths.CONFIGURATION_PATH.getValue());
             // Create new config if it doesn't exist
             if (!configurationFile.exists()) {
                 try {
@@ -58,13 +55,13 @@ public class ConfigurationLoader {
      * @throws IOException The file could not be copied
      */
     private static void copyDefaultConfigs() throws IOException {
-        InputStream defaultConfigInputStream  = ConfigurationLoader.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_PATH);
+        InputStream defaultConfigInputStream = ConfigurationLoader.class.getClassLoader().getResourceAsStream(ConfigurationPaths.DEFAULT_CONFIG_PATH.getValue());
         if (defaultConfigInputStream == null) {
             System.err.println("Default configs don't exist");
             System.exit(1);
         }
 
-        File destinationFile = new File(CONFIGURATION_PATH);
+        File destinationFile = new File(ConfigurationPaths.CONFIGURATION_PATH.getValue());
         //noinspection ResultOfMethodCallIgnored
         destinationFile.getParentFile().mkdirs();
         //noinspection ResultOfMethodCallIgnored
