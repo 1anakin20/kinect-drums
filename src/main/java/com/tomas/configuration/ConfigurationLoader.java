@@ -1,9 +1,6 @@
 package com.tomas.configuration;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -23,13 +20,30 @@ public class ConfigurationLoader {
     public static Configuration loadConfiguration() throws ConfigurationLoadingException {
         if (configurationInstance == null) {
             File configurationFile = new File(CONFIGURATION_PATH);
+            // Create new config if it doesn't exist
             if (!configurationFile.exists()) {
-                copyDefaultConfigs();
+                try {
+                    copyDefaultConfigs();
+                } catch (IOException e) {
+                    throw new ConfigurationLoadingException(e.getLocalizedMessage());
+                }
             }
 
-            FileReader configurationFileReader = new FileReader(configurationFile);
+            FileReader configurationFileReader = null;
+            try {
+                configurationFileReader = new FileReader(configurationFile);
+            } catch (FileNotFoundException e) {
+                // This catch should be unreachable because the file is created before
+                e.printStackTrace();
+                System.exit(1);
+            }
+
             Properties properties = new Properties();
-            properties.load(configurationFileReader);
+            try {
+                properties.load(configurationFileReader);
+            } catch (IOException e) {
+                throw new ConfigurationLoadingException(e.getLocalizedMessage());
+            }
             configurationInstance = new Configuration(properties);
         }
 
