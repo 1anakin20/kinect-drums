@@ -4,6 +4,8 @@ import com.jme3.app.Application;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.control.GhostControl;
+import com.tomas.configuration.ConfigurationKeys;
+import com.tomas.configuration.ConfigurationLoader;
 import com.tomas.properties.DrumData;
 import com.tomas.utils.SoundManager;
 import wiiusej.Wiimote;
@@ -42,8 +44,10 @@ public class WiimoteMotion extends WiimoteEventsAdapter {
 				String drumName = collidedGhost.getSpatial().getUserData(DrumData.AUDIO_NAME.getKey());
 				Runnable playSound = () -> SoundManager.playDrum(drumName, volume, assetManager);
 				app.enqueue(playSound);
-				// TODO set it by app preferences
-				if (true) rumbleExecutorService.execute(() -> hitRumble(50));
+				boolean rumble = Boolean.parseBoolean(
+						ConfigurationLoader.loadConfiguration()
+								.getValue(ConfigurationKeys.WIIMOTE_RUMBLE));
+				if (rumble) rumbleExecutorService.execute(() -> hitRumble(50));
 			}
 
 			buffer = TRIGGER_BUFFER;
