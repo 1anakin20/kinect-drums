@@ -6,4 +6,5 @@ kinect_drums.iml
 *.un~
 .gradle/
 *.iml
+*.log
 /configuration/

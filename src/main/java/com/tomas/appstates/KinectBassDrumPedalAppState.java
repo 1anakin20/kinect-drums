@@ -55,7 +55,6 @@ public class KinectBassDrumPedalAppState extends BaseAppState implements Physics
 				Vector3f rightKneeTranslation = rightKneeJoint.getTranslation();
 				if (rightKneeTranslation.getY() > kinect.getInitialRightKnee().getTranslation().getY() + 0.05) {
 					isBassPedalEnabled = true;
-					System.out.println("rightKneeTranslation = " + rightKneeTranslation);
 				} else {
 					if (isBassPedalEnabled) {
 						isBassPedalEnabled = false;

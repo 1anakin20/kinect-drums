@@ -2,55 +2,39 @@ package com.tomas.appstates;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.asset.AssetManager;
+import com.tomas.wiimote.WiimoteLifeCycleEvents;
+import com.tomas.wiimote.WiimoteManager;
+import com.tomas.wiimote.WiimoteMotion;
 import wiiusej.Wiimote;
 
 /**
  * Register the hits to the drum by stroking down the wiimote
  */
-// TODO Register the hits with the wiimote accelerometer
-public class WiimoteHandControllerAppState extends BaseAppState {
-	private Wiimote leftWiimote;
+public class WiimoteHandControllerAppState extends BaseAppState implements WiimoteLifeCycleEvents {
+	private AssetManager assetManager;
+	private Application app;
+	private WiimoteManager wiimoteManager;
 	private Wiimote rightWiimote;
+	private Wiimote leftWiimote;
+	private SticksAppState sticksAppState;
+
+	public WiimoteHandControllerAppState(SticksAppState sticksAppState) {
+		this.sticksAppState = sticksAppState;
+	}
 
 	@Override
 	protected void initialize(Application app) {
-		// Wiimote setup
-//		WiiUseApiManager wiiUseApiManager;
-//		try {
-//			wiiUseApiManager = new WiiUseApiManager();
-//		} catch (WiiusejNativeLibraryLoadingException e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//			return;
-//		}
-
-		// 2 wiimotes need to be used
-		// TODO Allow to start the app without the 2 wiimotes
-//		Wiimote[] wiimotes = wiiUseApiManager.getWiimotes(2);
-//		leftWiimote = wiimotes[0];
-//		rightWiimote = wiimotes[1];
-//
-//		leftWiimote.setLeds(true, false, false, false);
-//		rightWiimote.setLeds(false, true, false, false);
-//
-//		leftWiimote.activateMotionSensing();
-//		leftWiimote.activateSmoothing();
-//		leftWiimote.setAlphaSmoothingValue(0.8f);
-//		leftWiimote.activateContinuous();
-//		rightWiimote.activateMotionSensing();
-//		rightWiimote.activateSmoothing();
-//		rightWiimote.activateContinuous();
-//
-//		WiimoteMotion leftWiimoteMotion = new WiimoteMotion();
-//		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
-//
-//		WiimoteMotion rightWiimoteMotion = new WiimoteMotion();
-//		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
+		this.app = app;
+		assetManager = app.getAssetManager();
+		wiimoteManager = new WiimoteManager();
+		wiimoteManager.registerListener(this);
+		wiimoteManager.startLookingForWiimotes(2);
 	}
 
 	@Override
 	protected void cleanup(Application app) {
-
+		wiimoteManager.shutdown();
 	}
 
 	@Override
@@ -61,5 +45,27 @@ public class WiimoteHandControllerAppState extends BaseAppState {
 	@Override
 	protected void onDisable() {
 
+	}
+
+	@Override
+	public void connected(Wiimote[] wiimotes) {
+		rightWiimote = wiimotes[0];
+		leftWiimote = wiimotes[1];
+
+		// Left hand will be wiimote #1
+		leftWiimote.setLeds(true, false, false, false);
+		// Right hand will be wiimote #2
+		rightWiimote.setLeds(false, true, false, false);
+
+		rightWiimote.activateMotionSensing();
+		rightWiimote.activateSmoothing();
+		leftWiimote.activateMotionSensing();
+		leftWiimote.activateSmoothing();
+
+		WiimoteMotion rightWiimoteMotion = new WiimoteMotion(rightWiimote, app, assetManager, sticksAppState.getRightStickGhost());
+		rightWiimote.addWiiMoteEventListeners(rightWiimoteMotion);
+
+		WiimoteMotion leftWiimoteMotion = new WiimoteMotion(leftWiimote, app, assetManager, sticksAppState.getLeftStickGhost());
+		leftWiimote.addWiiMoteEventListeners(leftWiimoteMotion);
 	}
 }
