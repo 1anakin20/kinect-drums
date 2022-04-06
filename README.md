@@ -5,6 +5,8 @@ Drum to your heart content without a drum. The catch? You will need a Kinect and
 This is a work in progress. It allows to play the drums with a Kinect and optional wii remotes.
 
 # Interesting articles
+This project shows a similar concept, an unity project that only uses the Xbox Kinect: https://github.com/luaneyed/bolbbalgan-drum.
+
 Found after the beginning of this project, this paper shows the same concept this application is trying to achieve: https://studylib.net/doc/8717487/a-kinecttm-and-wiimotetm-based-digital-drum-kit.
 
 # Acknowledgments
